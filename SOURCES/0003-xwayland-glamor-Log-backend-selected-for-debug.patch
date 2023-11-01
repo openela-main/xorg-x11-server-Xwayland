@@ -1,0 +1,42 @@
+From 3206e133cb768709d32f260ac4b1bb17a46141a7 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Wed, 17 Nov 2021 13:09:58 +0100
+Subject: [PATCH xserver 3/4] xwayland/glamor: Log backend selected for debug
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add (verbose) statements to trace the actual backend used with glamor.
+
+That can be useful for debugging.
+
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Reviewed-by: Michel Dänzer <mdaenzer@redhat.com>
+(cherry picked from commit c5d1fed9fa32244739677ec5c58ea87b261e023b)
+---
+ hw/xwayland/xwayland-glamor.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/hw/xwayland/xwayland-glamor.c b/hw/xwayland/xwayland-glamor.c
+index 541d5e923..b34eafabb 100644
+--- a/hw/xwayland/xwayland-glamor.c
++++ b/hw/xwayland/xwayland-glamor.c
+@@ -409,6 +409,7 @@ xwl_glamor_select_gbm_backend(struct xwl_screen *xwl_screen)
+     if (xwl_screen->gbm_backend.is_available &&
+         xwl_glamor_has_wl_interfaces(xwl_screen, &xwl_screen->gbm_backend)) {
+         xwl_screen->egl_backend = &xwl_screen->gbm_backend;
++        LogMessageVerb(X_INFO, 3, "glamor: Using GBM backend\n");
+         return TRUE;
+     }
+     else
+@@ -426,6 +427,7 @@ xwl_glamor_select_eglstream_backend(struct xwl_screen *xwl_screen)
+     if (xwl_screen->eglstream_backend.is_available &&
+         xwl_glamor_has_wl_interfaces(xwl_screen, &xwl_screen->eglstream_backend)) {
+         xwl_screen->egl_backend = &xwl_screen->eglstream_backend;
++        LogMessageVerb(X_INFO, 3, "glamor: Using EGLStream backend\n");
+         return TRUE;
+     }
+     else
+-- 
+2.33.1
+

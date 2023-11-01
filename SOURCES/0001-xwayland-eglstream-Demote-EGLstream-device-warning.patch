@@ -1,0 +1,43 @@
+From 0a7ed9ff7ea20f7b958a2ad9f9bd045080a3ad9a Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Mon, 15 Nov 2021 16:02:34 +0100
+Subject: [PATCH xserver 1/4] xwayland/eglstream: Demote EGLstream device
+ warning
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If no EGLstream capable device is found at startup, Xwayland's EGLstream
+backend will log an error message "glamor: No eglstream capable devices
+found".
+
+However, considering that the vast majority of drivers do not implement
+EGLstream, the lack of EGLstream capable device is more of the norm than
+the exception.
+
+Change the error message to a log verbose message.
+
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Reviewed-by: Simon Ser <contact@emersion.fr>
+Reviewed-by: Jonas Ådahl <jadahl@gmail.com>
+(cherry picked from commit 96c82befa2c3f3dc3534743c67cc003c2106e9b0)
+---
+ hw/xwayland/xwayland-glamor-eglstream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hw/xwayland/xwayland-glamor-eglstream.c b/hw/xwayland/xwayland-glamor-eglstream.c
+index 8d18caaf5..93d192d58 100644
+--- a/hw/xwayland/xwayland-glamor-eglstream.c
++++ b/hw/xwayland/xwayland-glamor-eglstream.c
+@@ -1144,7 +1144,7 @@ xwl_eglstream_get_device(struct xwl_screen *xwl_screen)
+     free(devices);
+ out:
+     if (!device)
+-        ErrorF("glamor: No eglstream capable devices found\n");
++        LogMessageVerb(X_INFO, 3, "glamor: No eglstream capable devices found\n");
+     return device;
+ }
+ 
+-- 
+2.33.1
+

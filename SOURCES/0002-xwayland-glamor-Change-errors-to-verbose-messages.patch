@@ -1,0 +1,88 @@
+From a515f4f4336efb8a2adf9a3ac141129708297d80 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Mon, 29 Nov 2021 11:45:35 +0100
+Subject: [PATCH xserver 2/4] xwayland/glamor: Change errors to verbose
+ messages
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On a normal startup sequence, the Xwayland glamor backend would log
+an error whenever a required Wayland protocol is missing.
+
+Those are not really errors though, more informational messages along
+the glamor backend selection process.
+
+Demote those errors to verbose messages to reduce the verbosity of
+Xwayland at startup by default.
+
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Reviewed-by: Jonas Ådahl <jadahl@gmail.com>
+(cherry picked from commit 30d0d4a19be61dd7b61f5ced992cb299e6a38068)
+---
+ hw/xwayland/xwayland-glamor-eglstream.c | 6 ++++--
+ hw/xwayland/xwayland-glamor-gbm.c       | 2 +-
+ hw/xwayland/xwayland-glamor.c           | 6 ++++--
+ 3 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/hw/xwayland/xwayland-glamor-eglstream.c b/hw/xwayland/xwayland-glamor-eglstream.c
+index 93d192d58..5a20b452f 100644
+--- a/hw/xwayland/xwayland-glamor-eglstream.c
++++ b/hw/xwayland/xwayland-glamor-eglstream.c
+@@ -753,12 +753,14 @@ xwl_glamor_eglstream_has_wl_interfaces(struct xwl_screen *xwl_screen)
+         xwl_eglstream_get(xwl_screen);
+ 
+     if (xwl_eglstream->display == NULL) {
+-        ErrorF("glamor: 'wl_eglstream_display' not supported\n");
++        LogMessageVerb(X_INFO, 3,
++                       "glamor: 'wl_eglstream_display' not supported\n");
+         return FALSE;
+     }
+ 
+     if (xwl_eglstream->controller == NULL) {
+-        ErrorF("glamor: 'wl_eglstream_controller' not supported\n");
++        LogMessageVerb(X_INFO, 3,
++                       "glamor: 'wl_eglstream_controller' not supported\n");
+         return FALSE;
+     }
+ 
+diff --git a/hw/xwayland/xwayland-glamor-gbm.c b/hw/xwayland/xwayland-glamor-gbm.c
+index 466a1b052..e06b6f54b 100644
+--- a/hw/xwayland/xwayland-glamor-gbm.c
++++ b/hw/xwayland/xwayland-glamor-gbm.c
+@@ -835,7 +835,7 @@ xwl_glamor_gbm_has_wl_interfaces(struct xwl_screen *xwl_screen)
+     struct xwl_gbm_private *xwl_gbm = xwl_gbm_get(xwl_screen);
+ 
+     if (xwl_gbm->drm == NULL) {
+-        ErrorF("glamor: 'wl_drm' not supported\n");
++        LogMessageVerb(X_INFO, 3, "glamor: 'wl_drm' not supported\n");
+         return FALSE;
+     }
+ 
+diff --git a/hw/xwayland/xwayland-glamor.c b/hw/xwayland/xwayland-glamor.c
+index deb398f91..541d5e923 100644
+--- a/hw/xwayland/xwayland-glamor.c
++++ b/hw/xwayland/xwayland-glamor.c
+@@ -412,7 +412,8 @@ xwl_glamor_select_gbm_backend(struct xwl_screen *xwl_screen)
+         return TRUE;
+     }
+     else
+-        ErrorF("Missing Wayland requirements for glamor GBM backend\n");
++        LogMessageVerb(X_INFO, 3,
++                       "Missing Wayland requirements for glamor GBM backend\n");
+ #endif
+ 
+     return FALSE;
+@@ -428,7 +429,8 @@ xwl_glamor_select_eglstream_backend(struct xwl_screen *xwl_screen)
+         return TRUE;
+     }
+     else
+-        ErrorF("Missing Wayland requirements for glamor EGLStream backend\n");
++        LogMessageVerb(X_INFO, 3,
++                       "Missing Wayland requirements for glamor EGLStream backend\n");
+ #endif
+ 
+     return FALSE;
+-- 
+2.33.1
+
