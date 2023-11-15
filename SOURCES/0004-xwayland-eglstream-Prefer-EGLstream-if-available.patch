@@ -1,0 +1,64 @@
+From bdc00ba749ac6cde35c025f5f6b1a5b49c1f4960 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Wed, 17 Nov 2021 09:56:52 +0100
+Subject: [PATCH xserver 4/4] xwayland/eglstream: Prefer EGLstream if available
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Currently, when given the choice, Xwayland will pick the GBM backend
+over the EGLstream backend if both are available, unless the command
+line option “-eglstream” is specified.
+
+The NVIDIA proprietary driver had no support for GBM until driver series
+495, but starting with the driver series 495, both can be used.
+
+But there are other requirements with the rest of the stack, typically
+Mesa, egl-wayland, libglvnd as documented in the NVIDIA driver.
+
+So if the NVIDIA driver series 495 gets installed, Xwayland will pick
+the GBM backend even if EGLstream is available and may fail to render
+properly.
+
+To avoid that issue, prefer EGLstream if EGLstream and all the Wayland
+interfaces are available, and fallback to GBM automatically unless
+“-eglstream” was specified.
+
+With this, the compositor, given the choice, can decide which actual
+backend Xwayland would use by advertising (or not) the Wayland
+"wl_eglstream_controller" interface.
+
+This change has no impact on compositors which do not have support for
+EGLstream in the first place.
+
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Acked-by: Michel Dänzer <mdaenzer@redhat.com>
+(cherry picked from commit 6dd9709bd85cf5de4067887818c864220b951355)
+---
+ hw/xwayland/xwayland-glamor.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/hw/xwayland/xwayland-glamor.c b/hw/xwayland/xwayland-glamor.c
+index b34eafabb..f46b677f5 100644
+--- a/hw/xwayland/xwayland-glamor.c
++++ b/hw/xwayland/xwayland-glamor.c
+@@ -441,14 +441,10 @@ xwl_glamor_select_eglstream_backend(struct xwl_screen *xwl_screen)
+ void
+ xwl_glamor_select_backend(struct xwl_screen *xwl_screen, Bool use_eglstream)
+ {
+-    if (use_eglstream) {
+-        if (!xwl_glamor_select_eglstream_backend(xwl_screen))
++    if (!xwl_glamor_select_eglstream_backend(xwl_screen)) {
++        if (!use_eglstream)
+             xwl_glamor_select_gbm_backend(xwl_screen);
+     }
+-    else {
+-        if (!xwl_glamor_select_gbm_backend(xwl_screen))
+-            xwl_glamor_select_eglstream_backend(xwl_screen);
+-    }
+ }
+ 
+ Bool
+-- 
+2.33.1
+
