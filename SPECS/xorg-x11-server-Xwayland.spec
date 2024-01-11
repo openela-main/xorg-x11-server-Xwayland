@@ -8,8 +8,8 @@
 
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
-Version:   21.1.3
-Release:   7%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Version:   22.1.9
+Release:   2%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -17,46 +17,6 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 %else
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
-
-Patch1: 0001-xwayland-eglstream-Demote-EGLstream-device-warning.patch
-Patch2: 0002-xwayland-glamor-Change-errors-to-verbose-messages.patch
-Patch3: 0003-xwayland-glamor-Log-backend-selected-for-debug.patch
-Patch4: 0004-xwayland-eglstream-Prefer-EGLstream-if-available.patch
-
-# CVE-2021-4011
-Patch10001: 0001-record-Fix-out-of-bounds-access-in-SwapCreateRegiste.patch
-# CVE-2021-4009
-Patch10002: 0002-xfixes-Fix-out-of-bounds-access-in-ProcXFixesCreateP.patch
-# CVE-2021-4010
-Patch10003: 0003-Xext-Fix-out-of-bounds-access-in-SProcScreenSaverSus.patch
-# CVE-2021-4008
-Patch10004: 0004-render-Fix-out-of-bounds-access-in-SProcRenderCompos.patch
-# CVE-2022-2319/ZDI-CAN-16062, CVE-2022-2320/ZDI-CAN-16070
-Patch10005: 0001-xkb-switch-to-array-index-loops-to-moving-pointers.patch
-Patch10006: 0002-xkb-swap-XkbSetDeviceInfo-and-XkbSetDeviceInfoCheck.patch
-Patch10007: 0003-xkb-add-request-length-validation-for-XkbSetGeometry.patch
-# CVE-2022-3550
-Patch10008: 0001-xkb-proof-GetCountedString-against-request-length-at.patch
-# CVE-2022-3551
-Patch10009: 0001-xkb-fix-some-possible-memleaks-in-XkbGetKbdByName.patch
-# CVE-2022-46340
-Patch10010: 0001-Xtest-disallow-GenericEvents-in-XTestSwapFakeInput.patch
-# related to CVE-2022-46344
-Patch10011: 0002-Xi-return-an-error-from-XI-property-changes-if-verif.patch
-# CVE-2022-46344
-Patch10012: 0003-Xi-avoid-integer-truncation-in-length-check-of-ProcX.patch
-# CVE-2022-46341
-Patch10013: 0004-Xi-disallow-passive-grabs-with-a-detail-255.patch
-# CVE-2022-46343
-Patch10014: 0005-Xext-free-the-screen-saver-resource-when-replacing-i.patch
-# CVE-2022-46342
-Patch10015: 0006-Xext-free-the-XvRTVideoNotify-when-turning-off-from-.patch
-# CVE-2022-46283
-Patch10016: 0007-xkb-reset-the-radio_groups-pointer-to-NULL-after-fre.patch
-# Follow-up to CVE-2022-46340
-Patch10017: 0008-Xext-fix-invalid-event-type-mask-in-XTestSwapFakeInp.patch
-# CVE-2023-0494
-Patch10018: 0001-Xi-fix-potential-use-after-free-in-DeepCopyPointerCl.patch
 
 License:   MIT
 
@@ -68,11 +28,10 @@ BuildRequires: git-core
 BuildRequires: meson
 
 BuildRequires: wayland-devel
-BuildRequires: pkgconfig(wayland-client) >= 1.3.0
+BuildRequires: pkgconfig(wayland-client) >= 1.18.0
 BuildRequires: pkgconfig(wayland-protocols)
 BuildRequires: pkgconfig(wayland-eglstream-protocols)
 
-BuildRequires: pkgconfig(dmx)
 BuildRequires: pkgconfig(epoxy)
 BuildRequires: pkgconfig(fontenc)
 BuildRequires: pkgconfig(libdrm) >= 2.4.0
@@ -97,6 +56,7 @@ BuildRequires: pkgconfig(xshmfence) >= 1.1
 BuildRequires: pkgconfig(xtrans) >= 1.3.2
 BuildRequires: pkgconfig(xtst)
 BuildRequires: pkgconfig(xv)
+BuildRequires: pkgconfig(libxcvt)
 BuildRequires: xorg-x11-proto-devel >= 7.7-10
 
 BuildRequires: mesa-libGL-devel >= 9.2
@@ -163,6 +123,15 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Tue Apr 25 2023 Olivier Fourdan <ofourdan@redhat.com> - 22.1.9-2
+- Rebuild (#2158761)
+
+* Mon Apr  3 2023 Olivier Fourdan <ofourdan@redhat.com> - 22.1.9-1
+- xwayland 22.1.9 (#2158761)
+
+* Fri Mar 31 2023 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-8
+- Fix CVE-2023-1393 (#2180299)
+
 * Tue Feb  7 2023 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-7
 - Fix CVE-2023-0494 (#2166974)
 
