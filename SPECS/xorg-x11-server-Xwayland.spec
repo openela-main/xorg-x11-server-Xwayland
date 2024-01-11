@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   10%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   12%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -22,6 +22,7 @@ Patch1: 0001-xwayland-eglstream-Demote-EGLstream-device-warning.patch
 Patch2: 0002-xwayland-glamor-Change-errors-to-verbose-messages.patch
 Patch3: 0003-xwayland-glamor-Log-backend-selected-for-debug.patch
 Patch4: 0004-xwayland-eglstream-Prefer-EGLstream-if-available.patch
+Patch5: 0001-present-Send-a-PresentConfigureNotify-event-for-dest.patch
 
 # CVE-2021-4011
 Patch10001: 0001-record-Fix-out-of-bounds-access-in-SwapCreateRegiste.patch
@@ -57,6 +58,8 @@ Patch10024: 0007-xkb-reset-the-radio_groups-pointer-to-NULL-after-fre.patch
 Patch10025: 0008-Xext-fix-invalid-event-type-mask-in-XTestSwapFakeInp.patch
 # CVE-2023-0494
 Patch10026: 0001-Xi-fix-potential-use-after-free-in-DeepCopyPointerCl.patch
+# CVE-2023-1393
+Patch10027: 0001-composite-Fix-use-after-free-of-the-COW.patch
 
 License:   MIT
 
@@ -164,6 +167,13 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Tue Jun 13 2023 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-12
+- Backport fix for a deadlock with DRI3
+  Resolves: rhbz#2212831
+
+* Fri Mar 31 2023 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-11
+- Fix CVE-2023-1393 (#2180298)
+
 * Tue Feb  7 2023 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-10
 - Fix CVE-2023-0494 (#2166972)
 
