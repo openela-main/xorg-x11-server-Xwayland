@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   22.1.9
-Release:   2%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   5%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -17,6 +17,28 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 %else
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
+
+# Fix for CVE-2023-5367
+Patch1:   0001-Xi-randr-fix-handling-of-PropModeAppend-Prepend.patch
+# Fix for CVE-2023-6478
+Patch2:   0001-randr-avoid-integer-truncation-in-length-check-of-Pr.patch
+# Fix for CVE-2023-6377
+Patch3:   0001-Xi-allocate-enough-XkbActions-for-our-buttons.patch
+# Fix for CVE-2023-6816, ZDI-CAN-22664, ZDI-CAN-22665
+Patch4:   0001-dix-allocate-enough-space-for-logical-button-maps.patch
+# Fix for CVE-2024-0229, ZDI-CAN-22678
+Patch5:   0002-dix-Allocate-sufficient-xEvents-for-our-DeviceStateN.patch
+Patch6:   0003-dix-fix-DeviceStateNotify-event-calculation.patch
+Patch7:   0004-Xi-when-creating-a-new-ButtonClass-set-the-number-of.patch
+# Fix for CVE-2024-21885, ZDI-CAN-22744
+Patch8:   0005-Xi-flush-hierarchy-events-after-adding-removing-mast.patch
+# Fix for CVE-2024-21886, ZDI-CAN-22840
+Patch9:   0006-Xi-do-not-keep-linked-list-pointer-during-recursion.patch
+Patch10:  0007-dix-when-disabling-a-master-float-disabled-slaved-de.patch
+# Fix for CVE-2024-0408
+Patch11:  0008-glx-Call-XACE-hooks-on-the-GLX-buffer.patch
+# Fix for CVE-2024-0409
+Patch12:  0009-ephyr-xwayland-Use-the-proper-private-key-for-cursor.patch
 
 License:   MIT
 
@@ -123,6 +145,16 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Tue Jan 16 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.9-5
+  Fix for CVE-2023-6816, CVE-2024-0229, CVE-2024-21885, CVE-2024-21886,
+  CVE-2024-0408, CVE-2024-0409
+
+* Wed Dec 13 2023 Olivier Fourdan <ofourdan@redhat.com> - 21.1.9-4
+- Fix for CVE-2023-6377, CVE-2023-6478
+
+* Wed Oct 25 2023 Olivier Fourdan <ofourdan@redhat.com> - 22.1.9-3
+- Fix for CVE-2023-5367
+
 * Tue Apr 25 2023 Olivier Fourdan <ofourdan@redhat.com> - 22.1.9-2
 - Rebuild (#2158761)
 
