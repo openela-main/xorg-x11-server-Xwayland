@@ -1,0 +1,116 @@
+From 01941a831811c9fd47ffed5ea96375abeb20c9fc Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Tue, 30 Jan 2024 13:13:35 +1000
+Subject: [PATCH xserver 4/4] render: fix refcounting of glyphs during
+ ProcRenderAddGlyphs
+
+Previously, AllocateGlyph would return a new glyph with refcount=0 and a
+re-used glyph would end up not changing the refcount at all. The
+resulting glyph_new array would thus have multiple entries pointing to
+the same non-refcounted glyphs.
+
+AddGlyph may free a glyph, resulting in a UAF when the same glyph
+pointer is then later used.
+
+Fix this by returning a refcount of 1 for a new glyph and always
+incrementing the refcount for a re-used glyph, followed by dropping that
+refcount back down again when we're done with it.
+
+CVE-2024-31083, ZDI-CAN-22880
+
+This vulnerability was discovered by:
+Jan-Niklas Sohn working with Trend Micro Zero Day Initiative
+
+(backported from commit bdca6c3d1f5057eeb31609b1280fc93237b00c77)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/1464>
+---
+ render/glyph.c    |  5 +++--
+ render/glyphstr.h |  3 +++
+ render/render.c   | 15 +++++++++++----
+ 3 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/render/glyph.c b/render/glyph.c
+index f3ed9cf4c..d5fc5f3c9 100644
+--- a/render/glyph.c
++++ b/render/glyph.c
+@@ -245,10 +245,11 @@ FreeGlyphPicture(GlyphPtr glyph)
+     }
+ }
+ 
+-static void
++void
+ FreeGlyph(GlyphPtr glyph, int format)
+ {
+     CheckDuplicates(&globalGlyphs[format], "FreeGlyph");
++    BUG_RETURN(glyph->refcnt == 0);
+     if (--glyph->refcnt == 0) {
+         GlyphRefPtr gr;
+         int i;
+@@ -354,7 +355,7 @@ AllocateGlyph(xGlyphInfo * gi, int fdepth)
+     glyph = (GlyphPtr) malloc(size);
+     if (!glyph)
+         return 0;
+-    glyph->refcnt = 0;
++    glyph->refcnt = 1;
+     glyph->size = size + sizeof(xGlyphInfo);
+     glyph->info = *gi;
+     dixInitPrivates(glyph, (char *) glyph + head_size, PRIVATE_GLYPH);
+diff --git a/render/glyphstr.h b/render/glyphstr.h
+index 2f51bd244..fb6589d3e 100644
+--- a/render/glyphstr.h
++++ b/render/glyphstr.h
+@@ -102,6 +102,9 @@ HashGlyph(xGlyphInfo * gi,
+ extern void
+  AddGlyph(GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id);
+ 
++extern void
++FreeGlyph(GlyphPtr glyph, int format);
++
+ extern Bool
+  DeleteGlyph(GlyphSetPtr glyphSet, Glyph id);
+ 
+diff --git a/render/render.c b/render/render.c
+index 456f156d4..5bc2a204b 100644
+--- a/render/render.c
++++ b/render/render.c
+@@ -1076,6 +1076,7 @@ ProcRenderAddGlyphs(ClientPtr client)
+ 
+         if (glyph_new->glyph && glyph_new->glyph != DeletedGlyph) {
+             glyph_new->found = TRUE;
++            ++glyph_new->glyph->refcnt;
+         }
+         else {
+             GlyphPtr glyph;
+@@ -1168,8 +1169,10 @@ ProcRenderAddGlyphs(ClientPtr client)
+         err = BadAlloc;
+         goto bail;
+     }
+-    for (i = 0; i < nglyphs; i++)
++    for (i = 0; i < nglyphs; i++) {
+         AddGlyph(glyphSet, glyphs[i].glyph, glyphs[i].id);
++        FreeGlyph(glyphs[i].glyph, glyphSet->fdepth);
++    }
+ 
+     if (glyphsBase != glyphsLocal)
+         free(glyphsBase);
+@@ -1179,9 +1182,13 @@ ProcRenderAddGlyphs(ClientPtr client)
+         FreePicture((void *) pSrc, 0);
+     if (pSrcPix)
+         FreeScratchPixmapHeader(pSrcPix);
+-    for (i = 0; i < nglyphs; i++)
+-        if (glyphs[i].glyph && !glyphs[i].found)
+-            free(glyphs[i].glyph);
++    for (i = 0; i < nglyphs; i++) {
++        if (glyphs[i].glyph) {
++            --glyphs[i].glyph->refcnt;
++            if (!glyphs[i].found)
++                free(glyphs[i].glyph);
++        }
++    }
+     if (glyphsBase != glyphsLocal)
+         free(glyphsBase);
+     return err;
+-- 
+2.44.0
+

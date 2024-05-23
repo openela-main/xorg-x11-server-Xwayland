@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   15%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   16%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -81,6 +81,17 @@ Patch10037:   0007-dix-when-disabling-a-master-float-disabled-slaved-de.patch
 Patch10038:   0008-glx-Call-XACE-hooks-on-the-GLX-buffer.patch
 # Fix for CVE-2024-0409
 Patch10039:   0009-ephyr-xwayland-Use-the-proper-private-key-for-cursor.patch
+# Fix for copy/paste error in previous CVE fix
+Patch10040:  0001-dix-fix-valuator-copy-paste-error-in-the-DeviceState.patch
+# Fix for CVE-2024-31080
+Patch10041:  0002-Xi-ProcXIGetSelectedEvents-needs-to-use-unswapped-le.patch
+# Fix for CVE-2024-31081
+Patch10042:  0003-Xi-ProcXIPassiveGrabDevice-needs-to-use-unswapped-le.patch
+# Fix for CVE-2024-31083, ZDI-CAN-22880
+Patch10043:  0004-render-fix-refcounting-of-glyphs-during-ProcRenderAd.patch
+# Fix for the fix for CVE-2024-31083
+# https://gitlab.freedesktop.org/xorg/xserver/-/issues/1659
+Patch10044: 0001-render-Avoid-possible-double-free-in-ProcRenderAddGl.patch
 
 License:   MIT
 
@@ -188,6 +199,9 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Thu Apr  4 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-16
+- CVE fix for: CVE-2024-31080, CVE-2024-31081, CVE-2024-31083
+
 * Tue Jan 16 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-15
   Fix for CVE-2023-6816, CVE-2024-0229, CVE-2024-21885, CVE-2024-21886,
   CVE-2024-0408, CVE-2024-0409
