@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   16%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   17%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -92,6 +92,8 @@ Patch10043:  0004-render-fix-refcounting-of-glyphs-during-ProcRenderAd.patch
 # Fix for the fix for CVE-2024-31083
 # https://gitlab.freedesktop.org/xorg/xserver/-/issues/1659
 Patch10044: 0001-render-Avoid-possible-double-free-in-ProcRenderAddGl.patch
+# Fix for CVE-2024-9632
+Patch10045: 0001-xkb-Fix-buffer-overflow-in-_XkbSetCompatMap.patch
 
 License:   MIT
 
@@ -199,6 +201,9 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Oct 30 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-17
+- Fix for CVE-2024-9632 - (RHEL-61995)
+
 * Thu Apr  4 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-16
 - CVE fix for: CVE-2024-31080, CVE-2024-31081, CVE-2024-31083
 
