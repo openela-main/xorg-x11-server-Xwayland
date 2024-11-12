@@ -8,8 +8,8 @@
 
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
-Version:   22.1.9
-Release:   5%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Version:   23.2.7
+Release:   1%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -18,45 +18,26 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
 
-# Fix for CVE-2023-5367
-Patch1:   0001-Xi-randr-fix-handling-of-PropModeAppend-Prepend.patch
-# Fix for CVE-2023-6478
-Patch2:   0001-randr-avoid-integer-truncation-in-length-check-of-Pr.patch
-# Fix for CVE-2023-6377
-Patch3:   0001-Xi-allocate-enough-XkbActions-for-our-buttons.patch
-# Fix for CVE-2023-6816, ZDI-CAN-22664, ZDI-CAN-22665
-Patch4:   0001-dix-allocate-enough-space-for-logical-button-maps.patch
-# Fix for CVE-2024-0229, ZDI-CAN-22678
-Patch5:   0002-dix-Allocate-sufficient-xEvents-for-our-DeviceStateN.patch
-Patch6:   0003-dix-fix-DeviceStateNotify-event-calculation.patch
-Patch7:   0004-Xi-when-creating-a-new-ButtonClass-set-the-number-of.patch
-# Fix for CVE-2024-21885, ZDI-CAN-22744
-Patch8:   0005-Xi-flush-hierarchy-events-after-adding-removing-mast.patch
-# Fix for CVE-2024-21886, ZDI-CAN-22840
-Patch9:   0006-Xi-do-not-keep-linked-list-pointer-during-recursion.patch
-Patch10:  0007-dix-when-disabling-a-master-float-disabled-slaved-de.patch
-# Fix for CVE-2024-0408
-Patch11:  0008-glx-Call-XACE-hooks-on-the-GLX-buffer.patch
-# Fix for CVE-2024-0409
-Patch12:  0009-ephyr-xwayland-Use-the-proper-private-key-for-cursor.patch
-
 License:   MIT
 
 Requires: xorg-x11-server-common
 Requires: libEGL
+Requires: libepoxy >= 1.5.5
 
 BuildRequires: gcc
 BuildRequires: git-core
 BuildRequires: meson
 
 BuildRequires: wayland-devel
-BuildRequires: pkgconfig(wayland-client) >= 1.18.0
-BuildRequires: pkgconfig(wayland-protocols)
+BuildRequires: desktop-file-utils
+
+BuildRequires: pkgconfig(wayland-client) >= 1.21.0
+BuildRequires: pkgconfig(wayland-protocols) >= 1.30
 BuildRequires: pkgconfig(wayland-eglstream-protocols)
 
-BuildRequires: pkgconfig(epoxy)
+BuildRequires: pkgconfig(epoxy) >= 1.5.5
 BuildRequires: pkgconfig(fontenc)
-BuildRequires: pkgconfig(libdrm) >= 2.4.0
+BuildRequires: pkgconfig(libdrm) >= 2.4.89
 BuildRequires: pkgconfig(libssl)
 BuildRequires: pkgconfig(libtirpc)
 BuildRequires: pkgconfig(pixman-1)
@@ -79,7 +60,8 @@ BuildRequires: pkgconfig(xtrans) >= 1.3.2
 BuildRequires: pkgconfig(xtst)
 BuildRequires: pkgconfig(xv)
 BuildRequires: pkgconfig(libxcvt)
-BuildRequires: xorg-x11-proto-devel >= 7.7-10
+BuildRequires: pkgconfig(libdecor-0) >= 0.1.1
+BuildRequires: xorg-x11-proto-devel >= 2023.2-1
 
 BuildRequires: mesa-libGL-devel >= 9.2
 BuildRequires: mesa-libEGL-devel
@@ -107,6 +89,7 @@ Xwayland is an X server for running X clients under Wayland.
 %package devel
 Summary: Development package
 Requires: pkgconfig
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 The development package provides the developmental files which are
@@ -121,6 +104,7 @@ necessary for developing Wayland compositors using Xwayland.
         -Ddefault_font_path=%{default_font_path} \
         -Dbuilder_string="Build ID: %{name} %{version}-%{release}" \
         -Dxkb_output_dir=%{_localstatedir}/lib/xkb \
+        -Dserverconfigdir=%{_datadir}/xwayland \
         -Dxcsecurity=true \
         -Dglamor=true \
         -Ddri3=true
@@ -137,14 +121,29 @@ rm -Rf $RPM_BUILD_ROOT%{_includedir}/xorg
 rm -Rf $RPM_BUILD_ROOT%{_datadir}/aclocal
 rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 
+%check
+desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
+
 %files
+%dir %{_datadir}/xwayland
 %{_bindir}/Xwayland
 %{_mandir}/man1/Xwayland.1*
+%{_datadir}/applications/org.freedesktop.Xwayland.desktop
+%{_datadir}/xwayland/protocol.txt
 
 %files devel
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Thu May 16 2024 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-1
+- xwayland 23.2.7 - (RHEL-29912)
+
+* Thu Apr  4 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.9-7
+- CVE fix for: CVE-2024-31080, CVE-2024-31081, CVE-2024-31083
+
+* Wed Mar 13 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.9-6
+  New build to add xorg-x11-server-Xwayland-devel (RHEL-25083)
+
 * Tue Jan 16 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.9-5
   Fix for CVE-2023-6816, CVE-2024-0229, CVE-2024-21885, CVE-2024-21886,
   CVE-2024-0408, CVE-2024-0409
