@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   23.2.7
-Release:   1%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   3%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -17,6 +17,30 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 %else
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
+
+# Fix for CVE-2024-9632
+Patch1:    0001-xkb-Fix-buffer-overflow-in-_XkbSetCompatMap.patch
+# CVE-2025-26594: Use-after-free of the root cursor
+Patch2: 0001-Cursor-Refuse-to-free-the-root-cursor.patch
+Patch3: 0002-dix-keep-a-ref-to-the-rootCursor.patch
+# CVE-2025-26595: Buffer overflow in XkbVModMaskText()
+Patch4: 0003-xkb-Fix-buffer-overflow-in-XkbVModMaskText.patch
+# CVE-2025-26596: Heap overflow in XkbWriteKeySyms()
+Patch5: 0004-xkb-Fix-computation-of-XkbSizeKeySyms.patch
+# CVE-2025-26597: Buffer overflow in XkbChangeTypesOfKey()
+Patch6: 0005-xkb-Fix-buffer-overflow-in-XkbChangeTypesOfKey.patch
+# CVE-2025-26598: Out-of-bounds write in CreatePointerBarrierClient()
+Patch7: 0006-Xi-Fix-barrier-device-search.patch
+# CVE-2025-26599: Use of uninitialized pointer in compRedirectWindow()
+Patch8: 0007-composite-Handle-failure-to-redirect-in-compRedirect.patch
+Patch9: 0008-composite-initialize-border-clip-even-when-pixmap-al.patch
+# CVE-2025-26600: Use-after-free in PlayReleasedEvents()
+Patch10: 0009-dix-Dequeue-pending-events-on-frozen-device-on-remov.patch
+# CVE-2025-26601: Use-after-free in SyncInitTrigger()
+Patch11: 0010-sync-Do-not-let-sync-objects-uninitialized.patch
+Patch12: 0011-sync-Check-values-before-applying-changes.patch
+Patch13: 0012-sync-Do-not-fail-SyncAddTriggerToSyncObject.patch
+Patch14: 0013-sync-Apply-changes-last-in-SyncChangeAlarmAttributes.patch
 
 License:   MIT
 
@@ -135,6 +159,15 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Feb 26 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-3
+- CVE fix for: CVE-2025-26594 (RHEL-79126), CVE-2025-26595 (RHEL-79130),
+               CVE-2025-26596 (RHEL-79134), CVE-2025-26597 (RHEL-79140),
+               CVE-2025-26598 (RHEL-79141), CVE-2025-26599 (RHEL-79146),
+               CVE-2025-26600 (RHEL-79154), CVE-2025-26601 (RHEL-79150)
+
+* Wed Oct 30 2024 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-2
+- Fix for CVE-2024-9632 - (RHEL-61997)
+
 * Thu May 16 2024 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-1
 - xwayland 23.2.7 - (RHEL-29912)
 
