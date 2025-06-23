@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   23.2.7
-Release:   3%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -41,6 +41,19 @@ Patch11: 0010-sync-Do-not-let-sync-objects-uninitialized.patch
 Patch12: 0011-sync-Check-values-before-applying-changes.patch
 Patch13: 0012-sync-Do-not-fail-SyncAddTriggerToSyncObject.patch
 Patch14: 0013-sync-Apply-changes-last-in-SyncChangeAlarmAttributes.patch
+# CVE-2025-49175: Out-of-bounds access in X Rendering extension
+Patch15: 0001-render-Avoid-0-or-less-animated-cursors.patch
+# CVE-2025-49176: Integer overflow in Big Requests Extension
+Patch16: 0002-os-Do-not-overflow-the-integer-size-with-BigRequest.patch
+Patch17: 0003-os-Check-for-integer-overflow-on-BigRequest-length.patch
+# CVE-2025-49177: Data leak in XFIXES Extension 6
+Patch18: 0004-xfixes-Check-request-length-for-SetClientDisconnectM.patch
+# CVE-2025-49178: Unprocessed client request via bytes to ignore
+Patch19: 0005-os-Account-for-bytes-to-ignore-when-sharing-input-bu.patch
+# CVE-2025-49179: Integer overflow in X Record extension
+Patch20: 0006-record-Check-for-overflow-in-RecordSanityCheckRegist.patch
+# CVE-2025-49180: Integer overflow in RandR extension
+Patch21: 0007-randr-Check-for-overflow-in-RRChangeProviderProperty.patch
 
 License:   MIT
 
@@ -159,6 +172,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-4
+- CVE fix for: CVE-2025-49175 (RHEL-97341), CVE-2025-49176 (RHEL-97335),
+               CVE-2025-49177 (RHEL-97358), CVE-2025-49178 (RHEL-97395),
+               CVE-2025-49179 (RHEL-97405), CVE-2025-49180 (RHEL-97245)
+
 * Wed Feb 26 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-3
 - CVE fix for: CVE-2025-26594 (RHEL-79126), CVE-2025-26595 (RHEL-79130),
                CVE-2025-26596 (RHEL-79134), CVE-2025-26597 (RHEL-79140),
