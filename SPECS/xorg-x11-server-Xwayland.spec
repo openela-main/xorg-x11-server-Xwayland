@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   17%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   18%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -94,6 +94,17 @@ Patch10043:  0004-render-fix-refcounting-of-glyphs-during-ProcRenderAd.patch
 Patch10044: 0001-render-Avoid-possible-double-free-in-ProcRenderAddGl.patch
 # Fix for CVE-2024-9632
 Patch10045: 0001-xkb-Fix-buffer-overflow-in-_XkbSetCompatMap.patch
+# CVE-2025-49175: Out-of-bounds access in X Rendering extension
+Patch10046: 0001-render-Avoid-0-or-less-animated-cursors.patch
+# CVE-2025-49176: Integer overflow in Big Requests Extension
+Patch10047: 0002-os-Do-not-overflow-the-integer-size-with-BigRequest.patch
+Patch10048: 0003-os-Check-for-integer-overflow-on-BigRequest-length.patch
+# CVE-2025-49178: Unprocessed client request via bytes to ignore
+Patch10049: 0004-os-Account-for-bytes-to-ignore-when-sharing-input-bu.patch
+# CVE-2025-49179: Integer overflow in X Record extension
+Patch10050: 0005-record-Check-for-overflow-in-RecordSanityCheckRegist.patch
+# CVE-2025-49180: Integer overflow in RandR extension
+Patch10051: 0006-randr-Check-for-overflow-in-RRChangeProviderProperty.patch
 
 License:   MIT
 
@@ -201,6 +212,11 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-18
+- CVE fix for: CVE-2025-49175 (RHEL-97278), CVE-2025-49176 (RHEL-97299,
+               CVE-2025-49178 (RHEL-97374), CVE-2025-49179 (RHEL-97417),
+               CVE-2025-49180 (RHEL-97249)
+
 * Wed Oct 30 2024 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-17
 - Fix for CVE-2024-9632 - (RHEL-61995)
 
