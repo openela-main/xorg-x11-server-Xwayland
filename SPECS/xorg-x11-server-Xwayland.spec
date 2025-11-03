@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   24.1.5
-Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   5%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -55,6 +55,13 @@ Patch: 0005-os-Account-for-bytes-to-ignore-when-sharing-input-bu.patch
 Patch: 0006-record-Check-for-overflow-in-RecordSanityCheckRegist.patch
 # CVE-2025-49180: Integer overflow in RandR extension
 Patch: 0007-randr-Check-for-overflow-in-RRChangeProviderProperty.patch
+# CVE-2025-62229: Use-after-free in XPresentNotify structures creation
+Patch: 0001-present-Fix-use-after-free-in-present_create_notifie.patch
+# CVE-2025-62230: Use-after-free in Xkb client resource removal
+Patch: 0002-xkb-Make-the-RT_XKBCLIENT-resource-private.patch
+Patch: 0003-xkb-Free-the-XKB-resource-when-freeing-XkbInterest.patch
+# CVE-2025-62231: Value overflow in Xkb extension XkbSetCompatMap()
+Patch: 0004-xkb-Prevent-overflow-in-XkbSetCompatMap.patch
 
 License:   MIT
 
@@ -171,6 +178,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Thu Oct 30 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-5
+- CVE fix for: CVE-2025-62229 (RHEL-119964), CVE-2025-62230 (RHEL-120013),
+               CVE-2025-62231 (RHEL-125006)
+
 * Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-4
 - CVE fix for: CVE-2025-49175 (RHEL-97130), CVE-2025-49176 (RHEL-97136),
                CVE-2025-49177 (RHEL-97142), CVE-2025-49178 (RHEL-97148),
