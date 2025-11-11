@@ -180,19 +180,19 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 %changelog
 * Thu Oct 30 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-5
-- CVE fix for: CVE-2025-62229 (RHEL-119975), CVE-2025-62230 (RHEL-120020),
-               CVE-2025-62231 (RHEL-125016)
+- CVE fix for: CVE-2025-62229 (RHEL-119974), CVE-2025-62230 (RHEL-120021),
+               CVE-2025-62231 (RHEL-125017)
 
 * Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-4
-- CVE fix for: CVE-2025-49175 (RHEL-97341), CVE-2025-49176 (RHEL-97335),
-               CVE-2025-49177 (RHEL-97358), CVE-2025-49178 (RHEL-97395),
-               CVE-2025-49179 (RHEL-97405), CVE-2025-49180 (RHEL-97245)
+- CVE fix for: CVE-2025-49175 (RHEL-97288), CVE-2025-49176 (RHEL-97334),
+               CVE-2025-49177 (RHEL-97357), CVE-2025-49178 (RHEL-97393),
+               CVE-2025-49179 (RHEL-97404), CVE-2025-49180 (RHEL-97244)
 
 * Wed Feb 26 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-3
-- CVE fix for: CVE-2025-26594 (RHEL-79126), CVE-2025-26595 (RHEL-79130),
-               CVE-2025-26596 (RHEL-79134), CVE-2025-26597 (RHEL-79140),
-               CVE-2025-26598 (RHEL-79141), CVE-2025-26599 (RHEL-79146),
-               CVE-2025-26600 (RHEL-79154), CVE-2025-26601 (RHEL-79150)
+- CVE fix for: CVE-2025-26594 (RHEL-80204), CVE-2025-26595 (RHEL-80187),
+               CVE-2025-26596 (RHEL-80190), CVE-2025-26597 (RHEL-80193),
+               CVE-2025-26598 (RHEL-80195), CVE-2025-26599 (RHEL-80202),
+               CVE-2025-26600 (RHEL-80203), CVE-2025-26601 (RHEL-80207)
 
 * Wed Oct 30 2024 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-2
 - Fix for CVE-2024-9632 - (RHEL-61997)
