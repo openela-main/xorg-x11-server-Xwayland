@@ -179,13 +179,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 
 %changelog
 * Thu Oct 30 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-5
-- CVE fix for: CVE-2025-62229 (RHEL-119964), CVE-2025-62230 (RHEL-120013),
-               CVE-2025-62231 (RHEL-125006)
+- CVE fix for: CVE-2025-62229 (RHEL-119965), CVE-2025-62230 (RHEL-120014),
+               CVE-2025-62231 (RHEL-125004)
 
 * Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-4
-- CVE fix for: CVE-2025-49175 (RHEL-97130), CVE-2025-49176 (RHEL-97136),
-               CVE-2025-49177 (RHEL-97142), CVE-2025-49178 (RHEL-97148),
-               CVE-2025-49179 (RHEL-97154), CVE-2025-49180 (RHEL-97160)
+- CVE fix for: CVE-2025-49175 (RHEL-97129), CVE-2025-49176 (RHEL-97135),
+               CVE-2025-49177 (RHEL-97141), CVE-2025-49178 (RHEL-97147),
+               CVE-2025-49179 (RHEL-97153), CVE-2025-49180 (RHEL-97159)
 
 * Wed May 7 2025 Tomas Pelka <tpelka@redhat.com> - 24.1.5-3
 Rebuild for 10.0.z required due to issue when releasing original erratum.
@@ -195,10 +195,10 @@ Rebuild for 10.0.z required due to issue when releasing original erratum.
                CVE-2025-26600 (RHEL-80517), CVE-2025-26601 (RHEL-80516)
 
 * Wed Feb 26 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-2
-- CVE fix for: CVE-2025-26594 (RHEL-79127), CVE-2025-26595 (RHEL-79131),
-               CVE-2025-26596 (RHEL-79142), CVE-2025-26597 (RHEL-79144),
-               CVE-2025-26598 (RHEL-79145), CVE-2025-26599 (RHEL-79147),
-               CVE-2025-26600 (RHEL-79155), CVE-2025-26601 (RHEL-79151)
+- CVE fix for: CVE-2025-26594 (RHEL-80504), CVE-2025-26595 (RHEL-80505),
+               CVE-2025-26596 (RHEL-80510), CVE-2025-26597 (RHEL-80511),
+               CVE-2025-26598 (RHEL-80513), CVE-2025-26599 (RHEL-80512),
+               CVE-2025-26600 (RHEL-80517), CVE-2025-26601 (RHEL-80516)
 
 * Tue Feb 11 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-1
 - xwayland 24.1.5 (RHEL-78562)
