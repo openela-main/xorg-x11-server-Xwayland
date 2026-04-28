@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   23.2.7
-Release:   5%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   6%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -61,6 +61,17 @@ Patch23: 0002-xkb-Make-the-RT_XKBCLIENT-resource-private.patch
 Patch24: 0003-xkb-Free-the-XKB-resource-when-freeing-XkbInterest.patch
 # CVE-2025-62231: Value overflow in Xkb extension XkbSetCompatMap()
 Patch25: 0004-xkb-Prevent-overflow-in-XkbSetCompatMap.patch
+# CVE-2026-33999: XKB Integer Underflow in XkbSetCompatMap()
+Patch26: 0001-xkb-fix-buffer-re-use-in-_XkbSetCompatMap.patch
+# CVE-2026-34000: XKB Out-of-bounds Read in CheckSetGeom()
+Patch27: 0002-xkb-Fix-bounds-check-in-_CheckSetGeom.patch
+# CVE-2026-34001: XSYNC Use-after-free in miSyncTriggerFence()
+Patch28: 0003-miext-sync-Fix-use-after-free-in-miSyncTriggerFence.patch
+# CVE-2026-34002: XKB Out-of-bounds read in CheckModifierMap()
+Patch29: 0004-xkb-Fix-out-of-bounds-read-in-CheckModifierMap.patch
+# CVE-2026-34003: XKB Buffer overflow in CheckKeyTypes()
+Patch30: 0005-xkb-Add-additional-bound-checking-in-CheckKeyTypes.patch
+Patch31: 0006-xkb-Add-more-_XkbCheckRequestBounds.patch
 
 License:   MIT
 
@@ -179,6 +190,13 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Apr 22 2026 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-6
+- CVE fix for: CVE-2026-33999, CVE-2026-34000, CVE-2026-34001
+               CVE-2026-34002, CVE-2026-34003
+  Resolves: https://redhat.atlassian.net/browse/RHEL-163198
+  Resolves: https://redhat.atlassian.net/browse/RHEL-163294
+  Resolves: https://redhat.atlassian.net/browse/RHEL-163252
+
 * Thu Oct 30 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-5
 - CVE fix for: CVE-2025-62229 (RHEL-119974), CVE-2025-62230 (RHEL-120021),
                CVE-2025-62231 (RHEL-125017)
