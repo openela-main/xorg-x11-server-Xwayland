@@ -8,8 +8,8 @@
 
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
-Version:   24.1.5
-Release:   6%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Version:   24.1.9
+Release:   2%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -17,62 +17,6 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 %else
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
-
-# Fix a regression with gamescope
-# https://gitlab.freedesktop.org/xorg/xserver/-/issues/1790
-Patch:     0001-Revert-xwayland-Don-t-run-key-behaviors-and-actions.patch
-# CVE-2025-26594: Use-after-free of the root cursor
-Patch: 0001-Cursor-Refuse-to-free-the-root-cursor.patch
-Patch: 0002-dix-keep-a-ref-to-the-rootCursor.patch
-# CVE-2025-26595: Buffer overflow in XkbVModMaskText()
-Patch: 0003-xkb-Fix-buffer-overflow-in-XkbVModMaskText.patch
-# CVE-2025-26596: Heap overflow in XkbWriteKeySyms()
-Patch: 0004-xkb-Fix-computation-of-XkbSizeKeySyms.patch
-# CVE-2025-26597: Buffer overflow in XkbChangeTypesOfKey()
-Patch: 0005-xkb-Fix-buffer-overflow-in-XkbChangeTypesOfKey.patch
-# CVE-2025-26598: Out-of-bounds write in CreatePointerBarrierClient()
-Patch: 0006-Xi-Fix-barrier-device-search.patch
-# CVE-2025-26599: Use of uninitialized pointer in compRedirectWindow()
-Patch: 0007-composite-Handle-failure-to-redirect-in-compRedirect.patch
-Patch: 0008-composite-initialize-border-clip-even-when-pixmap-al.patch
-# CVE-2025-26600: Use-after-free in PlayReleasedEvents()
-Patch: 0009-dix-Dequeue-pending-events-on-frozen-device-on-remov.patch
-# CVE-2025-26601: Use-after-free in SyncInitTrigger()
-Patch: 0010-sync-Do-not-let-sync-objects-uninitialized.patch
-Patch: 0011-sync-Check-values-before-applying-changes.patch
-Patch: 0012-sync-Do-not-fail-SyncAddTriggerToSyncObject.patch
-Patch: 0013-sync-Apply-changes-last-in-SyncChangeAlarmAttributes.patch
-# CVE-2025-49175: Out-of-bounds access in X Rendering extension
-Patch: 0001-render-Avoid-0-or-less-animated-cursors.patch
-# CVE-2025-49176: Integer overflow in Big Requests Extension
-Patch: 0002-os-Do-not-overflow-the-integer-size-with-BigRequest.patch
-Patch: 0003-os-Check-for-integer-overflow-on-BigRequest-length.patch
-# CVE-2025-49177: Data leak in XFIXES Extension 6
-Patch: 0004-xfixes-Check-request-length-for-SetClientDisconnectM.patch
-# CVE-2025-49178: Unprocessed client request via bytes to ignore
-Patch: 0005-os-Account-for-bytes-to-ignore-when-sharing-input-bu.patch
-# CVE-2025-49179: Integer overflow in X Record extension
-Patch: 0006-record-Check-for-overflow-in-RecordSanityCheckRegist.patch
-# CVE-2025-49180: Integer overflow in RandR extension
-Patch: 0007-randr-Check-for-overflow-in-RRChangeProviderProperty.patch
-# CVE-2025-62229: Use-after-free in XPresentNotify structures creation
-Patch: 0001-present-Fix-use-after-free-in-present_create_notifie.patch
-# CVE-2025-62230: Use-after-free in Xkb client resource removal
-Patch: 0002-xkb-Make-the-RT_XKBCLIENT-resource-private.patch
-Patch: 0003-xkb-Free-the-XKB-resource-when-freeing-XkbInterest.patch
-# CVE-2025-62231: Value overflow in Xkb extension XkbSetCompatMap()
-Patch: 0004-xkb-Prevent-overflow-in-XkbSetCompatMap.patch
-# CVE-2026-33999: XKB Integer Underflow in XkbSetCompatMap()
-Patch: 0001-xkb-fix-buffer-re-use-in-_XkbSetCompatMap.patch
-# CVE-2026-34000: XKB Out-of-bounds Read in CheckSetGeom()
-Patch: 0002-xkb-Fix-bounds-check-in-_CheckSetGeom.patch
-# CVE-2026-34001: XSYNC Use-after-free in miSyncTriggerFence()
-Patch: 0003-miext-sync-Fix-use-after-free-in-miSyncTriggerFence.patch
-# CVE-2026-34002: XKB Out-of-bounds read in CheckModifierMap()
-Patch: 0004-xkb-Fix-out-of-bounds-read-in-CheckModifierMap.patch
-# CVE-2026-34003: XKB Buffer overflow in CheckKeyTypes()
-Patch: 0005-xkb-Add-additional-bound-checking-in-CheckKeyTypes.patch
-Patch: 0006-xkb-Add-more-_XkbCheckRequestBounds.patch
 
 License:   MIT
 
@@ -189,16 +133,16 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
-* Wed Apr 22 2026 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-6
-- CVE fix for: CVE-2026-33999, CVE-2026-34000, CVE-2026-34001
-               CVE-2026-34002, CVE-2026-34003
-  Resolves: https://redhat.atlassian.net/browse/RHEL-163188
-  Resolves: https://redhat.atlassian.net/browse/RHEL-163284
-  Resolves: https://redhat.atlassian.net/browse/RHEL-163242
+* Tue Jan 20 2026 Michel Dänzer  <mdaenzer@redhat.com> - 24.1.9-2
+- Rebuild against xorg-x11-xtrans-devel 1.6.0-1
+  Resolves: RHEL-117512
+
+* Fri Nov  7 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-1
+- Rebase to Xwayland 24.1.9 (RHEL-120264)
 
 * Thu Oct 30 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-5
-- CVE fix for: CVE-2025-62229 (RHEL-119965), CVE-2025-62230 (RHEL-120014),
-               CVE-2025-62231 (RHEL-125004)
+- CVE fix for: CVE-2025-62229 (RHEL-119966), CVE-2025-62230 (RHEL-120012),
+               CVE-2025-62231 (RHEL-125005)
 
 * Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.5-4
 - CVE fix for: CVE-2025-49175 (RHEL-97129), CVE-2025-49176 (RHEL-97135),
