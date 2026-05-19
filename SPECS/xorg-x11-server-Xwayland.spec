@@ -8,8 +8,8 @@
 
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
-Version:   23.2.7
-Release:   6%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Version:   24.1.9
+Release:   2%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -17,61 +17,6 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 %else
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
-
-# Fix for CVE-2024-9632
-Patch1:    0001-xkb-Fix-buffer-overflow-in-_XkbSetCompatMap.patch
-# CVE-2025-26594: Use-after-free of the root cursor
-Patch2: 0001-Cursor-Refuse-to-free-the-root-cursor.patch
-Patch3: 0002-dix-keep-a-ref-to-the-rootCursor.patch
-# CVE-2025-26595: Buffer overflow in XkbVModMaskText()
-Patch4: 0003-xkb-Fix-buffer-overflow-in-XkbVModMaskText.patch
-# CVE-2025-26596: Heap overflow in XkbWriteKeySyms()
-Patch5: 0004-xkb-Fix-computation-of-XkbSizeKeySyms.patch
-# CVE-2025-26597: Buffer overflow in XkbChangeTypesOfKey()
-Patch6: 0005-xkb-Fix-buffer-overflow-in-XkbChangeTypesOfKey.patch
-# CVE-2025-26598: Out-of-bounds write in CreatePointerBarrierClient()
-Patch7: 0006-Xi-Fix-barrier-device-search.patch
-# CVE-2025-26599: Use of uninitialized pointer in compRedirectWindow()
-Patch8: 0007-composite-Handle-failure-to-redirect-in-compRedirect.patch
-Patch9: 0008-composite-initialize-border-clip-even-when-pixmap-al.patch
-# CVE-2025-26600: Use-after-free in PlayReleasedEvents()
-Patch10: 0009-dix-Dequeue-pending-events-on-frozen-device-on-remov.patch
-# CVE-2025-26601: Use-after-free in SyncInitTrigger()
-Patch11: 0010-sync-Do-not-let-sync-objects-uninitialized.patch
-Patch12: 0011-sync-Check-values-before-applying-changes.patch
-Patch13: 0012-sync-Do-not-fail-SyncAddTriggerToSyncObject.patch
-Patch14: 0013-sync-Apply-changes-last-in-SyncChangeAlarmAttributes.patch
-# CVE-2025-49175: Out-of-bounds access in X Rendering extension
-Patch15: 0001-render-Avoid-0-or-less-animated-cursors.patch
-# CVE-2025-49176: Integer overflow in Big Requests Extension
-Patch16: 0002-os-Do-not-overflow-the-integer-size-with-BigRequest.patch
-Patch17: 0003-os-Check-for-integer-overflow-on-BigRequest-length.patch
-# CVE-2025-49177: Data leak in XFIXES Extension 6
-Patch18: 0004-xfixes-Check-request-length-for-SetClientDisconnectM.patch
-# CVE-2025-49178: Unprocessed client request via bytes to ignore
-Patch19: 0005-os-Account-for-bytes-to-ignore-when-sharing-input-bu.patch
-# CVE-2025-49179: Integer overflow in X Record extension
-Patch20: 0006-record-Check-for-overflow-in-RecordSanityCheckRegist.patch
-# CVE-2025-49180: Integer overflow in RandR extension
-Patch21: 0007-randr-Check-for-overflow-in-RRChangeProviderProperty.patch
-# CVE-2025-62229: Use-after-free in XPresentNotify structures creation
-Patch22: 0001-present-Fix-use-after-free-in-present_create_notifie.patch
-# CVE-2025-62230: Use-after-free in Xkb client resource removal
-Patch23: 0002-xkb-Make-the-RT_XKBCLIENT-resource-private.patch
-Patch24: 0003-xkb-Free-the-XKB-resource-when-freeing-XkbInterest.patch
-# CVE-2025-62231: Value overflow in Xkb extension XkbSetCompatMap()
-Patch25: 0004-xkb-Prevent-overflow-in-XkbSetCompatMap.patch
-# CVE-2026-33999: XKB Integer Underflow in XkbSetCompatMap()
-Patch26: 0001-xkb-fix-buffer-re-use-in-_XkbSetCompatMap.patch
-# CVE-2026-34000: XKB Out-of-bounds Read in CheckSetGeom()
-Patch27: 0002-xkb-Fix-bounds-check-in-_CheckSetGeom.patch
-# CVE-2026-34001: XSYNC Use-after-free in miSyncTriggerFence()
-Patch28: 0003-miext-sync-Fix-use-after-free-in-miSyncTriggerFence.patch
-# CVE-2026-34002: XKB Out-of-bounds read in CheckModifierMap()
-Patch29: 0004-xkb-Fix-out-of-bounds-read-in-CheckModifierMap.patch
-# CVE-2026-34003: XKB Buffer overflow in CheckKeyTypes()
-Patch30: 0005-xkb-Add-additional-bound-checking-in-CheckKeyTypes.patch
-Patch31: 0006-xkb-Add-more-_XkbCheckRequestBounds.patch
 
 License:   MIT
 
@@ -87,7 +32,7 @@ BuildRequires: wayland-devel
 BuildRequires: desktop-file-utils
 
 BuildRequires: pkgconfig(wayland-client) >= 1.21.0
-BuildRequires: pkgconfig(wayland-protocols) >= 1.30
+BuildRequires: pkgconfig(wayland-protocols) >= 1.34
 BuildRequires: pkgconfig(wayland-eglstream-protocols)
 
 BuildRequires: pkgconfig(epoxy) >= 1.5.5
@@ -116,7 +61,7 @@ BuildRequires: pkgconfig(xtst)
 BuildRequires: pkgconfig(xv)
 BuildRequires: pkgconfig(libxcvt)
 BuildRequires: pkgconfig(libdecor-0) >= 0.1.1
-BuildRequires: xorg-x11-proto-devel >= 2023.2-1
+BuildRequires: xorg-x11-proto-devel >= 2024.1-1
 
 BuildRequires: mesa-libGL-devel >= 9.2
 BuildRequires: mesa-libEGL-devel
@@ -190,16 +135,16 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
-* Wed Apr 22 2026 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-6
-- CVE fix for: CVE-2026-33999, CVE-2026-34000, CVE-2026-34001
-               CVE-2026-34002, CVE-2026-34003
-  Resolves: https://redhat.atlassian.net/browse/RHEL-163198
-  Resolves: https://redhat.atlassian.net/browse/RHEL-163294
-  Resolves: https://redhat.atlassian.net/browse/RHEL-163252
+* Tue Jan 13 2026 Michel Dänzer  <mdaenzer@redhat.com> - 24.1.9-2
+- Rebuild against xorg-x11-xtrans-devel 1.4.0-9
+  Resolves: RHEL-117510
+
+* Thu Nov 20 2025 Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-1
+- Rebase to Xwayland 24.1.9 (RHEL-129828)
 
 * Thu Oct 30 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-5
-- CVE fix for: CVE-2025-62229 (RHEL-119974), CVE-2025-62230 (RHEL-120021),
-               CVE-2025-62231 (RHEL-125017)
+- CVE fix for: CVE-2025-62229 (RHEL-119977), CVE-2025-62230 (RHEL-120023),
+               CVE-2025-62231 (RHEL-125018)
 
 * Wed Jun 18 2025 Olivier Fourdan <ofourdan@redhat.com> - 23.2.7-4
 - CVE fix for: CVE-2025-49175 (RHEL-97288), CVE-2025-49176 (RHEL-97334),
