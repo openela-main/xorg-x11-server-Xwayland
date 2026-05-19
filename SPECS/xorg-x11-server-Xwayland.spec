@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   24.1.9
-Release:   2%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -17,6 +17,20 @@ Source0:   https://gitlab.freedesktop.org/xorg/%{pkgname}/-/archive/%{commit}/%{
 %else
 Source0:   https://www.x.org/pub/individual/xserver/%{pkgname}-%{version}.tar.xz
 %endif
+
+# https://gitlab.freedesktop.org/xorg/xserver/-/work_items/1885
+Patch:     0001-xwayland-Handle-GetCurrentClient-returning-NULL-in-x.patch
+# CVE-2026-33999: XKB Integer Underflow in XkbSetCompatMap()
+Patch1:    0001-xkb-fix-buffer-re-use-in-_XkbSetCompatMap.patch
+# CVE-2026-34000: XKB Out-of-bounds Read in CheckSetGeom()
+Patch2:    0002-xkb-Fix-bounds-check-in-_CheckSetGeom.patch
+# CVE-2026-34001: XSYNC Use-after-free in miSyncTriggerFence()
+Patch3:    0003-miext-sync-Fix-use-after-free-in-miSyncTriggerFence.patch
+# CVE-2026-34002: XKB Out-of-bounds read in CheckModifierMap()
+Patch4:    0004-xkb-Fix-out-of-bounds-read-in-CheckModifierMap.patch
+# CVE-2026-34003: XKB Buffer overflow in CheckKeyTypes()
+Patch5:    0005-xkb-Add-additional-bound-checking-in-CheckKeyTypes.patch
+Patch6:    0006-xkb-Add-more-_XkbCheckRequestBounds.patch
 
 License:   MIT
 
@@ -135,6 +149,17 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Apr 22 2026 Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-4
+- CVE fix for: CVE-2026-33999, CVE-2026-34000, CVE-2026-34001
+               CVE-2026-34002, CVE-2026-34003
+  Resolves: https://redhat.atlassian.net/browse/RHEL-163199
+  Resolves: https://redhat.atlassian.net/browse/RHEL-163295
+  Resolves: https://redhat.atlassian.net/browse/RHEL-163253
+
+* Tue Apr 21 2026 Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-3
+- Fix a regression in Xwayland 24.1.9 with XTS test Xlib10
+  Resolves: https://redhat.atlassian.net/browse/RHEL-170368
+
 * Tue Jan 13 2026 Michel Dänzer  <mdaenzer@redhat.com> - 24.1.9-2
 - Rebuild against xorg-x11-xtrans-devel 1.4.0-9
   Resolves: RHEL-117510

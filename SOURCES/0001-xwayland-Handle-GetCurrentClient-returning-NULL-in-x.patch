@@ -1,0 +1,46 @@
+From e75146412aae1f27918812cfdd0a67342f3f0cfe Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Michel=20D=C3=A4nzer?= <mdaenzer@redhat.com>
+Date: Tue, 21 Apr 2026 12:46:01 +0200
+Subject: [PATCH xserver] xwayland: Handle GetCurrentClient returning NULL in
+ xwl_reparent_window
+
+It's not the WM client in that case.
+
+Fixes crash.
+
+Closes: https://gitlab.freedesktop.org/xorg/xserver/-/work_items/1885
+Fixes: 6aacf04f51cf ("xwayland: Add heuristic for WM windows based on reparenting")
+(cherry picked from commit 6357c9afce656cdc250a8475eaa86647d0d6e501)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2189>
+---
+ hw/xwayland/xwayland-window.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/hw/xwayland/xwayland-window.c b/hw/xwayland/xwayland-window.c
+index afb421989..e07547e0f 100644
+--- a/hw/xwayland/xwayland-window.c
++++ b/hw/xwayland/xwayland-window.c
+@@ -1878,6 +1878,7 @@ xwl_reparent_window(WindowPtr window, WindowPtr prior_parent)
+     ScreenPtr screen = window->drawable.pScreen;
+     struct xwl_screen *xwl_screen = xwl_screen_get(screen);
+     WindowPtr parent = window->parent;
++    ClientPtr current_client;
+     Bool *is_wm_window;
+ 
+     if (xwl_screen->ReparentWindow) {
+@@ -1887,8 +1888,10 @@ xwl_reparent_window(WindowPtr window, WindowPtr prior_parent)
+         screen->ReparentWindow = xwl_reparent_window;
+     }
+ 
++    current_client = GetCurrentClient();
+     if (!parent->parent ||
+-        GetCurrentClient()->index != xwl_screen->wm_client_id)
++        !current_client ||
++        current_client->index != xwl_screen->wm_client_id)
+         return;
+ 
+     /* If the WM client reparents a window, mark the new parent as a WM window */
+-- 
+2.53.0
+
