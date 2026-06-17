@@ -1,0 +1,37 @@
+From 5f73a5cf77a512117234adbbc2e3988479609200 Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Wed, 29 Apr 2026 05:59:12 +0000
+Subject: [PATCH xserver 25/31] Xi: add missing gesture grab type checks in
+ ProcXIPassiveUngrabDevice
+
+ProcXIPassiveUngrabDevice was missing XIGrabtypeGesturePinchBegin and
+XIGrabtypeGestureSwipeBegin from its detail!=0 rejection check. The
+corresponding ProcXIPassiveGrabDevice function correctly includes
+these gesture types.
+
+Assisted-by: Claude:claude-claude-opus-4-6
+(cherry picked from commit 90954812496770f4903a024cb610404a8dd882ad)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2225>
+---
+ Xi/xipassivegrab.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Xi/xipassivegrab.c b/Xi/xipassivegrab.c
+index 896233bec..2f22e64f6 100644
+--- a/Xi/xipassivegrab.c
++++ b/Xi/xipassivegrab.c
+@@ -332,7 +332,9 @@ ProcXIPassiveUngrabDevice(ClientPtr client)
+ 
+     if ((stuff->grab_type == XIGrabtypeEnter ||
+          stuff->grab_type == XIGrabtypeFocusIn ||
+-         stuff->grab_type == XIGrabtypeTouchBegin) && stuff->detail != 0) {
++         stuff->grab_type == XIGrabtypeTouchBegin ||
++         stuff->grab_type == XIGrabtypeGesturePinchBegin ||
++         stuff->grab_type == XIGrabtypeGestureSwipeBegin) && stuff->detail != 0) {
+         client->errorValue = stuff->detail;
+         return BadValue;
+     }
+-- 
+2.54.0
+

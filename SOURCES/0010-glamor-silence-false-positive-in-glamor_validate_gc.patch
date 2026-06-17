@@ -1,0 +1,42 @@
+From c3507c99d9466d189b03d9ef1e9957a651441be6 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 26 Oct 2025 12:56:13 -0700
+Subject: [PATCH xserver 10/31] glamor: silence false positive in
+ glamor_validate_gc()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+We know that if gc->tileIsPixel is false, then gc->tile.pixmap must be
+a valid pixmap, but gcc's static analyzer doesn't and needs to be told.
+
+Silences false positive reported in #1817:
+
+xwayland-24.1.6/redhat-linux-build/../glamor/glamor_core.c:205:19:
+ warning[-Wanalyzer-null-dereference]: dereference of NULL ‘0’
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit a79bdc495eaabd770cec03badd74c3b023877ba1)
+(cherry picked from commit 03b40ee38d58285063c7ed22998a390422109f13)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ glamor/glamor_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/glamor/glamor_core.c b/glamor/glamor_core.c
+index 9a7510da0..8a601d086 100644
+--- a/glamor/glamor_core.c
++++ b/glamor/glamor_core.c
+@@ -200,6 +200,8 @@ glamor_validate_gc(GCPtr gc, unsigned long changes, DrawablePtr drawable)
+      */
+     if (changes & GCTile) {
+         if (!gc->tileIsPixel) {
++            assert(gc->tile.pixmap != NullPixmap);
++
+             glamor_pixmap_private *pixmap_priv =
+                 glamor_get_pixmap_private(gc->tile.pixmap);
+             if ((!GLAMOR_PIXMAP_PRIV_HAS_FBO(pixmap_priv))
+-- 
+2.54.0
+

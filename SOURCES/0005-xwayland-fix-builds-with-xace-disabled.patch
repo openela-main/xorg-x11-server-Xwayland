@@ -1,0 +1,86 @@
+From 5feedb15a5ed819b9fc09f271ff7a3cc9a00a810 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Wed, 20 Aug 2025 13:15:17 -0700
+Subject: [PATCH xserver 05/31] xwayland: fix builds with xace disabled
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+CI meson-disable-options builds were failing with:
+../hw/xwayland/xwayland-screen.c: In function ‘xwl_close_screen’:
+../hw/xwayland/xwayland-screen.c:246:5: error: implicit declaration of
+ function ‘XaceDeleteCallback’; did you mean ‘DeleteCallback’?
+ [-Werror=implicit-function-declaration]
+  246 |     XaceDeleteCallback(XACE_PROPERTY_ACCESS, xwl_access_property_callback, screen);
+      |     ^~~~~~~~~~~~~~~~~~
+      |     DeleteCallback
+
+../hw/xwayland/xwayland-screen.c:246:24: error: ‘XACE_PROPERTY_ACCESS’
+ undeclared (first use in this function)
+  246 |     XaceDeleteCallback(XACE_PROPERTY_ACCESS, xwl_access_property_callback, screen);
+      |                        ^~~~~~~~~~~~~~~~~~~~
+
+../hw/xwayland/xwayland-screen.c: In function ‘xwl_screen_init’:
+../hw/xwayland/xwayland-screen.c:1174:5: error: implicit declaration of
+ function ‘XaceRegisterCallback’ [-Werror=implicit-function-declaration]
+ 1174 |     XaceRegisterCallback(XACE_PROPERTY_ACCESS, xwl_access_property_callback, pScreen);
+      |     ^~~~~~~~~~~~~~~~~~~~
+
+../hw/xwayland/xwayland-screen.c:1174:26: error: ‘XACE_PROPERTY_ACCESS’
+ undeclared (first use in this function)
+ 1174 |     XaceRegisterCallback(XACE_PROPERTY_ACCESS, xwl_access_property_callback, pScreen);
+      |                          ^~~~~~~~~~~~~~~~~~~~
+
+Fixes: a07c2cda9 ("xwayland: Add an XACE property access handler")
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit 48acd1ae7835c2e95c7f2db704b1f22dcba4efdd)
+(cherry picked from commit 3298b0a3e021efc99e4a7892ce4b176bc5e7d556)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ hw/xwayland/xwayland-screen.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/hw/xwayland/xwayland-screen.c b/hw/xwayland/xwayland-screen.c
+index 7ab9174ec..c83adda9f 100644
+--- a/hw/xwayland/xwayland-screen.c
++++ b/hw/xwayland/xwayland-screen.c
+@@ -181,6 +181,7 @@ xwl_property_callback(CallbackListPtr *pcbl, void *closure,
+         xwl_window_update_property(xwl_window, rec);
+ }
+ 
++#ifdef XACE
+ #define readOnlyPropertyAccessMask (DixReadAccess |\
+                                     DixGetAttrAccess |\
+                                     DixListPropAccess |\
+@@ -207,6 +208,7 @@ xwl_access_property_callback(CallbackListPtr *pcbl, void *closure,
+ }
+ 
+ #undef readOnlyPropertyAccessMask
++#endif /* XACE */
+ 
+ static void
+ xwl_root_window_finalized_callback(CallbackListPtr *pcbl,
+@@ -237,7 +239,9 @@ xwl_close_screen(ScreenPtr screen)
+     xwl_dmabuf_feedback_destroy(&xwl_screen->default_feedback);
+ #endif
+     DeleteCallback(&PropertyStateCallback, xwl_property_callback, screen);
++#ifdef XACE
+     XaceDeleteCallback(XACE_PROPERTY_ACCESS, xwl_access_property_callback, screen);
++#endif
+ 
+     xorg_list_for_each_entry_safe(xwl_output, next_xwl_output,
+                                   &xwl_screen->output_list, link)
+@@ -1168,7 +1172,9 @@ xwl_screen_init(ScreenPtr pScreen, int argc, char **argv)
+ 
+     AddCallback(&PropertyStateCallback, xwl_property_callback, pScreen);
+     AddCallback(&RootWindowFinalizeCallback, xwl_root_window_finalized_callback, pScreen);
++#ifdef XACE
+     XaceRegisterCallback(XACE_PROPERTY_ACCESS, xwl_access_property_callback, pScreen);
++#endif
+ 
+     xwl_screen_setup_custom_vector(xwl_screen);
+ 
+-- 
+2.54.0
+
