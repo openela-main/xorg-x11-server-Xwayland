@@ -1,0 +1,61 @@
+From 1dd4ba518a87ecb71e058cc4c509ea0600779c9c Mon Sep 17 00:00:00 2001
+From: Yixue Wang <yixue.wang@outlook.com>
+Date: Wed, 28 Jan 2026 16:11:23 +0800
+Subject: [PATCH xserver 37/50] xwayland: wrong expecting_event
+
+According to
+
+https://wayland.app/protocols/wayland#wl_seat:event:capabilities
+
+Compositor might send capabilities when its capabilities change.
+Decrease expecting_event here without any check might cause a
+negative expecting_count.
+
+(cherry picked from commit 6bf6a9bff293fc1b26024d27d444829c945d3f0e)
+(cherry picked from commit 6a37e21ca4bd650568a42c820470bf710937627e)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ hw/xwayland/xwayland-input.c | 6 +++++-
+ hw/xwayland/xwayland-input.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/hw/xwayland/xwayland-input.c b/hw/xwayland/xwayland-input.c
+index 1edfd0b10..3d7d01db3 100644
+--- a/hw/xwayland/xwayland-input.c
++++ b/hw/xwayland/xwayland-input.c
+@@ -1423,7 +1423,10 @@ seat_handle_capabilities(void *data, struct wl_seat *seat,
+         release_touch(xwl_seat);
+     }
+ 
+-    xwl_seat->xwl_screen->expecting_event--;
++    if (xwl_seat->caps_initialized == FALSE) {
++        xwl_seat->caps_initialized = TRUE;
++        xwl_seat->xwl_screen->expecting_event--;
++    }
+ }
+ 
+ static void
+@@ -1481,6 +1484,7 @@ create_input_device(struct xwl_screen *xwl_screen, uint32_t id, uint32_t version
+         wl_registry_bind(xwl_screen->registry, id,
+                          &wl_seat_interface, min(version, 5));
+     xwl_seat->id = id;
++    xwl_seat->caps_initialized = FALSE;
+ 
+     xwl_cursor_init(&xwl_seat->cursor, xwl_seat->xwl_screen,
+                     xwl_seat_update_cursor);
+diff --git a/hw/xwayland/xwayland-input.h b/hw/xwayland/xwayland-input.h
+index 0c6591b5e..f039e9964 100644
+--- a/hw/xwayland/xwayland-input.h
++++ b/hw/xwayland/xwayland-input.h
+@@ -73,6 +73,7 @@ struct xwl_seat {
+     struct xwl_window *tablet_focus_window;
+     uint32_t id;
+     uint32_t pointer_enter_serial;
++    Bool caps_initialized;
+     struct xorg_list link;
+     CursorPtr x_cursor;
+     OsTimerPtr x_cursor_timer;
+-- 
+2.54.0
+

@@ -1,0 +1,43 @@
+From 71331ed8d45851fa46bab18b51d620271bbac7da Mon Sep 17 00:00:00 2001
+From: Mikhail Dmitrichenko <m.dmitrichenko222@gmail.com>
+Date: Tue, 14 Apr 2026 13:22:35 +0300
+Subject: [PATCH xserver 43/50] xkb: fix potential buff overflow in
+ XkbVModIndexText for XkbCFile format
+
+len calculation and strncpy limit were off by one when prefixing
+"vmod_" to the virtual modifier name. This could write the final
+NULL one byte past the allocated buffer from tbGetBuffer().
+
+Use proper allocation len for prefix to avoid writing out-of-bounds.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE
+
+Signed-off-by: Mikhail Dmitrichenko <m.dmitrichenko222@gmail.com>
+(cherry picked from commit 5dfb435c1d864bf154369cb86d085d4159730378)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2225>
+---
+ xkb/xkbtext.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xkb/xkbtext.c b/xkb/xkbtext.c
+index d2a2567fc..62ce80e92 100644
+--- a/xkb/xkbtext.c
++++ b/xkb/xkbtext.c
+@@ -129,11 +129,11 @@ XkbVModIndexText(XkbDescPtr xkb, unsigned ndx, unsigned format)
+ 
+     len = strlen(tmp) + 1;
+     if (format == XkbCFile)
+-        len += 4;
++        len += 5;
+     rtrn = tbGetBuffer(len);
+     if (format == XkbCFile) {
+         strcpy(rtrn, "vmod_");
+-        strncpy(&rtrn[5], tmp, len - 4);
++        strncpy(&rtrn[5], tmp, len - 5);
+     }
+     else
+         strncpy(rtrn, tmp, len);
+-- 
+2.54.0
+

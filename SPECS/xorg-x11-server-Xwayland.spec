@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   20%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   20%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.2
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -123,6 +123,77 @@ Patch10059: 0004-xkb-Fix-out-of-bounds-read-in-CheckModifierMap.patch
 # CVE-2026-34003: XKB Buffer overflow in CheckKeyTypes()
 Patch10060: 0005-xkb-Add-additional-bound-checking-in-CheckKeyTypes.patch
 Patch10061: 0006-xkb-Add-more-_XkbCheckRequestBounds.patch
+# ZDI-CAN-30159 - CVE-2026-50257 - XSYNC Use-After-Free in miSyncDestroyFence()
+# ZDI-CAN-30163 - CVE-2026-50260 - XSYNC Use-After-Free in FreeCounter()
+Patch10062: 0001-sync-fix-deletion-of-counters-and-fences.patch
+# ZDI-CAN-30164 - CVE-2026-50261 - XSYNC Use-After-Free in SyncChangeCounter()
+Patch10063: 0002-sync-restart-trigger-list-iteration-in-SyncChangeCou.patch
+# ZDI-CAN-30160 - CVE-2026-50258 - XKB Key Types Stack-based Buffer Overflow
+Patch10064: 0003-xkb-reject-key-types-with-num_levels-exceeding-XkbMa.patch
+# ZDI-CAN-30161 - CVE-2026-50259 - XKB SetMap Request Stack-based Buffer Overflow
+Patch10065: 0004-xkb-clamp-nMaps-to-mapWidths-buffer-size-in-CheckKey.patch
+# ZDI-CAN-30165 - CVE-2026-50262 - GLX ChangeDrawableAttributes Out-Of-Bounds Read/Write
+Patch10066: 0005-glx-fix-reversed-length-check-in-ChangeDrawableAttri.patch
+# ZDI-CAN-30168 - CVE-2026-50263 - CreateSaverWindow Use-After-Free Information Disclosure
+Patch10067: 0006-saver-re-fetch-screen-private-after-CheckScreenPriva.patch
+# ZDI-CAN-30136 - CVE-2026-50256 - Font Alias Stack-based Buffer Overflow
+Patch10068: 0007-dix-increase-XLFDMAXFONTNAMELEN-to-match-libXfont2-s.patch
+# Other security related fixes
+Patch10069: 0001-os-avoid-potential-out-of-bounds-access-at-logVHdrMe.patch
+Patch10070: 0002-dix-avoid-null-ptr-deref-at-doListFontsWithInfo.patch
+Patch10071: 0003-Xext-shm-avoid-null-dereference-in-ShmInitScreenPriv.patch
+Patch10072: 0004-Xext-sync-avoid-null-dereference-if-SysCounterGetPri.patch
+Patch10073: 0005-Xext-sync-avoid-null-dereference-in-init_system_idle.patch
+Patch10074: 0006-Xext-sync-Avoid-dereference-of-invalid-pointer-if-ma.patch
+Patch10075: 0007-Xext-vidmode-avoid-null-dereference-if-VidModeCreate.patch
+Patch10076: 0008-Xext-xres-avoid-null-dereference-in-ProcXResQueryCli.patch
+Patch10077: 0009-Xext-xselinux-add-fast-path-to-ProcSELinuxListSelect.patch
+Patch10078: 0010-Xext-xselinux-avoid-memory-leak-in-SELinuxAtomToSID.patch
+Patch10079: 0011-Xext-xtest-avoid-null-dereference-in-ProcXTestFakeIn.patch
+Patch10080: 0012-Xi-avoid-null-dereference-if-wOtherInputMasks-return.patch
+Patch10081: 0013-Xi-set-value-for-led_values-in-CopySwapKbdFeedback.patch
+Patch10082: 0014-Xi-handle-allocation-failure-in-ProcXGetDeviceDontPr.patch
+Patch10083: 0015-Xi-handle-allocation-failure-in-ProcXListInputDevice.patch
+Patch10084: 0016-Xi-handle-allocation-failure-in-add_master_func.patch
+Patch10085: 0017-dix-handle-allocation-failure-in-DeviceFocusEvent.patch
+Patch10086: 0018-dix-avoid-null-dereference-if-wOtherInputMasks-retur.patch
+Patch10087: 0019-dix-assert-that-size-of-buffers-to-swap-is-a-multipl.patch
+Patch10088: 0020-dix-handle-allocation-failure-in-ChangeWindowDeviceC.patch
+Patch10089: 0021-os-use-close-on-exec-for-X-server-socket-to-prevent-.patch
+Patch10090: 0022-xf86bigfont-fix-Wimplicit-function-declaration-error.patch
+Patch10091: 0023-dix-Fix-builds-with-meson-Dxace-false-Dwerror-true.patch
+Patch10092: 0024-meson-don-t-build-xselinux-if-xace-is-disabled.patch
+Patch10093: 0025-panoramix-avoid-null-dereference-in-PanoramiXMaybeAd.patch
+Patch10094: 0026-panoramix-avoid-null-dereference-in-PanoramiXConsoli.patch
+Patch10095: 0027-glamor-handle-potential-NULL-return-from-GetPictureS.patch
+Patch10096: 0028-glamor-handle-allocation-failure-in-glamor_create_pi.patch
+Patch10097: 0029-glamor-silence-false-positive-in-glamor_validate_gc.patch
+Patch10098: 0030-glamor-handle-allocation-failures-in-glamor_largepix.patch
+Patch10099: 0031-glamor-avoid-null-dereference-in-glamor_dash_setup.patch
+Patch10100: 0032-glamor-avoid-null-dereference-in-glamor_composite_cl.patch
+Patch10101: 0033-glamor-avoid-double-free-in-glamor_make_pixmap_expor.patch
+Patch10102: 0034-dix-set-errorValue-correctly-when-XID-lookup-fails-i.patch
+Patch10103: 0035-os-avoid-closing-null-fd-at-Fopen.patch
+Patch10104: 0036-os-make-FormatInt64-handle-LONG_MIN-correctly.patch
+Patch10105: 0037-xwayland-wrong-expecting_event.patch
+Patch10106: 0038-render-fix-multiple-mem-leaks-on-err-paths.patch
+Patch10107: 0039-dix-avoid-null-ptr-deref-at-doListFontsAndAliases.patch
+Patch10108: 0040-randr-clear-primary-screen-s-primaryOutput-when-the-.patch
+Patch10109: 0041-os-include-assert.h-in-ospoll.c.patch
+Patch10110: 0042-xkb-fix-incorrect-size-check-when-growing-doodads-in.patch
+Patch10111: 0043-xkb-fix-potential-buff-overflow-in-XkbVModIndexText-.patch
+# No XIGrabtypeGestureSwipeBegin in el8
+# Patch10112: 0044-Xi-add-missing-gesture-grab-type-checks-in-ProcXIPas.patch
+Patch10113: 0045-xkb-Fix-out-of-bounds-array-access-in-_CheckSetShape.patch
+Patch10114: 0046-xkb-Fix-off-by-one-in-color-index-validation-in-_Che.patch
+Patch10115: 0047-xkb-Fix-off-by-one-and-NULL-dereferences-in-_CheckSe.patch
+Patch10116: 0048-xkb-Add-bounds-check-for-action-data-in-CheckKeyActi.patch
+Patch10117: 0049-present-actually-return-the-created-notifies.patch
+Patch10118: 0050-glx-reject-negative-size-in-FeedbackBuffer-and-Selec.patch
+# https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2237
+Patch10119: 0001-dix-Silence-a-compiler-warning-in-doListFontsAndAlia.patch
+# https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/1257
+Patch10120: 0001-xkb-fix-int-size-mismatch.patch
 
 License:   MIT
 
@@ -230,6 +301,16 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Fri Jun 12 2026  Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20.2
+- Other security related fixes
+  Resolves: https://redhat.atlassian.net/browse/RHEL-184293
+
+* Wed Jun 10 2026  Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20.1
+- CVE fix for: CVE-2026-50256, CVE-2026-50257, CVE-2026-50258,
+               CVE-2026-50259, CVE-2026-50260, CVE-2026-50261,
+               CVE-2026-50262, CVE-2026-50263
+  Resolves: https://redhat.atlassian.net/browse/RHEL-182445
+
 * Tue Apr 14 2026 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20
 - CVE fix for: CVE-2026-33999, CVE-2026-34000, CVE-2026-34001
                CVE-2026-34002, CVE-2026-34003

@@ -1,0 +1,89 @@
+From a8fbfbf701812f22a444ee7d20997bd8d9292939 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 25 Oct 2025 15:33:40 -0700
+Subject: [PATCH xserver 27/50] glamor: handle potential NULL return from
+ GetPictureScreenIfSet()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Unlike GetPictureScreen(), GetPictureScreenIfSet() checks if the
+private key is registered, and returns NULL if it is not.
+
+Reported in #1817:
+xwayland-24.1.6/redhat-linux-build/../glamor/glamor.c:926:5:
+ warning[-Wanalyzer-null-dereference]: dereference of NULL ‘ps’
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit 69b48423bd66f04bac8a633004ebc8e6e691756f)
+(cherry picked from commit 394cb2d824df5fa481279173357a4ad1c759ceec)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ glamor/glamor.c | 38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
+
+diff --git a/glamor/glamor.c b/glamor/glamor.c
+index 177871a10..c5562c58a 100644
+--- a/glamor/glamor.c
++++ b/glamor/glamor.c
+@@ -877,23 +877,25 @@ glamor_init(ScreenPtr screen, unsigned int flags)
+     glamor_priv->saved_procs.bitmap_to_region = screen->BitmapToRegion;
+     screen->BitmapToRegion = glamor_bitmap_to_region;
+ 
+-    glamor_priv->saved_procs.composite = ps->Composite;
+-    ps->Composite = glamor_composite;
++    if (ps) {
++        glamor_priv->saved_procs.composite = ps->Composite;
++        ps->Composite = glamor_composite;
+ 
+-    glamor_priv->saved_procs.trapezoids = ps->Trapezoids;
+-    ps->Trapezoids = glamor_trapezoids;
++        glamor_priv->saved_procs.trapezoids = ps->Trapezoids;
++        ps->Trapezoids = glamor_trapezoids;
+ 
+-    glamor_priv->saved_procs.triangles = ps->Triangles;
+-    ps->Triangles = glamor_triangles;
++        glamor_priv->saved_procs.triangles = ps->Triangles;
++        ps->Triangles = glamor_triangles;
+ 
+-    glamor_priv->saved_procs.addtraps = ps->AddTraps;
+-    ps->AddTraps = glamor_add_traps;
++        glamor_priv->saved_procs.addtraps = ps->AddTraps;
++        ps->AddTraps = glamor_add_traps;
+ 
+-    glamor_priv->saved_procs.composite_rects = ps->CompositeRects;
+-    ps->CompositeRects = glamor_composite_rectangles;
++        glamor_priv->saved_procs.composite_rects = ps->CompositeRects;
++        ps->CompositeRects = glamor_composite_rectangles;
+ 
+-    glamor_priv->saved_procs.glyphs = ps->Glyphs;
+-    ps->Glyphs = glamor_composite_glyphs;
++        glamor_priv->saved_procs.glyphs = ps->Glyphs;
++        ps->Glyphs = glamor_composite_glyphs;
++    }
+ 
+     glamor_init_vbo(screen);
+     glamor_init_gradient_shader(screen);
+@@ -950,11 +952,13 @@ glamor_close_screen(ScreenPtr screen)
+     screen->BitmapToRegion = glamor_priv->saved_procs.bitmap_to_region;
+     screen->BlockHandler = glamor_priv->saved_procs.block_handler;
+ 
+-    ps->Composite = glamor_priv->saved_procs.composite;
+-    ps->Trapezoids = glamor_priv->saved_procs.trapezoids;
+-    ps->Triangles = glamor_priv->saved_procs.triangles;
+-    ps->CompositeRects = glamor_priv->saved_procs.composite_rects;
+-    ps->Glyphs = glamor_priv->saved_procs.glyphs;
++    if (ps) {
++        ps->Composite = glamor_priv->saved_procs.composite;
++        ps->Trapezoids = glamor_priv->saved_procs.trapezoids;
++        ps->Triangles = glamor_priv->saved_procs.triangles;
++        ps->CompositeRects = glamor_priv->saved_procs.composite_rects;
++        ps->Glyphs = glamor_priv->saved_procs.glyphs;
++    }
+ 
+     screen_pixmap = screen->GetScreenPixmap(screen);
+     glamor_pixmap_destroy_fbo(screen_pixmap);
+-- 
+2.54.0
+

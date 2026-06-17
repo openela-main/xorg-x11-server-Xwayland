@@ -1,0 +1,35 @@
+From 3d67ef2bfa70d1ffc21a3511f1ed4905f98e9f8c Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Wed, 6 May 2026 11:45:15 +1000
+Subject: [PATCH xserver 49/50] present: actually return the created notifies
+
+present_create_notifies() creates an array of notifies but never returns
+them to the caller, despite them being passed individually to
+present_add_window_notify(). The caller proceeds with a NULL notifies
+array, eventually causing an OOB in present_vblank_notify() when
+vblank->notifies is NULL.
+
+Reported-by: Feng Ning, Innora Pte. Ltd.
+(cherry picked from commit f70cc16c6831c9faa14c1f2a8588c6efb6ede263)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2225>
+---
+ present/present_notify.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/present/present_notify.c b/present/present_notify.c
+index 00b3b68bd..531b949b6 100644
+--- a/present/present_notify.c
++++ b/present/present_notify.c
+@@ -92,6 +92,8 @@ present_create_notifies(ClientPtr client, int num_notifies, xPresentNotify *x_no
+ 
+         added++;
+     }
++
++    *p_notifies = notifies;
+     return Success;
+ 
+ bail:
+-- 
+2.54.0
+

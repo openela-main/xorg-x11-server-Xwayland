@@ -1,0 +1,57 @@
+From eb4797599497b5f7d00dcbd0e140ab5227251765 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 19 Aug 2025 18:52:16 -0700
+Subject: [PATCH xserver 23/50] dix: Fix builds with meson -Dxace=false
+ -Dwerror=true
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+CI meson-disable-options builds were failing with:
+../dix/events.c: In function ‘CoreEnterLeaveEvent’:
+../dix/events.c:4723:19: error: unused variable ‘client’
+ [-Werror=unused-variable]
+ 4723 |         ClientPtr client = grab ? rClient(grab) : wClient(pWin);
+      |                   ^~~~~~
+../dix/events.c: In function ‘CoreFocusEvent’:
+../dix/events.c:4834:19: error: unused variable ‘client’
+ [-Werror=unused-variable]
+ 4834 |         ClientPtr client = wClient(pWin);
+      |                   ^~~~~~
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit 6611caf828af4833d59cd41f8c64a910f1edcac9)
+(cherry picked from commit 878d73e31296f59fa70c9ac56508d51f140bb9ee)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ dix/events.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/dix/events.c b/dix/events.c
+index 1441cff25..eec29f4dc 100644
+--- a/dix/events.c
++++ b/dix/events.c
+@@ -4621,7 +4621,9 @@ CoreEnterLeaveEvent(DeviceIntPtr mouse,
+         xKeymapEvent ke = {
+             .type = KeymapNotify
+         };
++#ifdef XACE
+         ClientPtr client = grab ? rClient(grab) : wClient(pWin);
++#endif
+         int rc;
+ 
+         rc = XaceHook(XACE_DEVICE_ACCESS, client, keybd, DixReadAccess);
+@@ -4732,7 +4734,9 @@ CoreFocusEvent(DeviceIntPtr dev, int type, int mode, int detail, WindowPtr pWin)
+         xKeymapEvent ke = {
+             .type = KeymapNotify
+         };
++#ifdef XACE
+         ClientPtr client = wClient(pWin);
++#endif
+         int rc;
+ 
+         rc = XaceHook(XACE_DEVICE_ACCESS, client, dev, DixReadAccess);
+-- 
+2.54.0
+
