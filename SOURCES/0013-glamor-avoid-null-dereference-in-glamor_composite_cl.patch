@@ -1,0 +1,39 @@
+From 419f81c69396e5ccf84d43acb42eb788447b1f19 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 2 Nov 2025 11:23:37 -0800
+Subject: [PATCH xserver 13/31] glamor: avoid null dereference in
+ glamor_composite_clipped_region()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Reported in #1817:
+
+xwayland-24.1.6/redhat-linux-build/../glamor/glamor_render.c:1577:21:
+ warning[-Wanalyzer-null-dereference]: dereference of NULL ‘0’
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit 6a4ec30af49bcbf61cf8ebc3a8f5541abac9024d)
+(cherry picked from commit 2df83c556674c1cc855b5a8df29ab46cc8581d4f)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ glamor/glamor_render.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/glamor/glamor_render.c b/glamor/glamor_render.c
+index 1bcf01102..1208b49a7 100644
+--- a/glamor/glamor_render.c
++++ b/glamor/glamor_render.c
+@@ -1573,7 +1573,7 @@ glamor_composite_clipped_region(CARD8 op,
+     if (source
+         && ((!source->pDrawable
+              && (source->pSourcePict->type != SourcePictTypeSolidFill))
+-            || (source->pDrawable
++            || (source->pDrawable && source_pixmap
+                 && !GLAMOR_PIXMAP_PRIV_HAS_FBO(source_pixmap_priv)
+                 && (source_pixmap->drawable.width != width
+                     || source_pixmap->drawable.height != height)))) {
+-- 
+2.54.0
+

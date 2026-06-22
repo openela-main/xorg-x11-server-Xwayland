@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   24.1.9
-Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}
+Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.2
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -31,6 +31,55 @@ Patch:     0004-xkb-Fix-out-of-bounds-read-in-CheckModifierMap.patch
 # CVE-2026-34003: XKB Buffer overflow in CheckKeyTypes()
 Patch:     0005-xkb-Add-additional-bound-checking-in-CheckKeyTypes.patch
 Patch:     0006-xkb-Add-more-_XkbCheckRequestBounds.patch
+# ZDI-CAN-30159 - CVE-2026-50257 - XSYNC Use-After-Free in miSyncDestroyFence()
+# ZDI-CAN-30163 - CVE-2026-50260 - XSYNC Use-After-Free in FreeCounter()
+Patch:     0001-sync-fix-deletion-of-counters-and-fences.patch
+# ZDI-CAN-30164 - CVE-2026-50261 - XSYNC Use-After-Free in SyncChangeCounter()
+Patch:     0002-sync-restart-trigger-list-iteration-in-SyncChangeCou.patch
+# ZDI-CAN-30160 - CVE-2026-50258 - XKB Key Types Stack-based Buffer Overflow
+Patch:     0003-xkb-reject-key-types-with-num_levels-exceeding-XkbMa.patch
+# ZDI-CAN-30161 - CVE-2026-50259 - XKB SetMap Request Stack-based Buffer Overflow
+Patch:     0004-xkb-clamp-nMaps-to-mapWidths-buffer-size-in-CheckKey.patch
+# ZDI-CAN-30165 - CVE-2026-50262 - GLX ChangeDrawableAttributes Out-Of-Bounds Read/Write
+Patch:     0005-glx-fix-reversed-length-check-in-ChangeDrawableAttri.patch
+# ZDI-CAN-30168 - CVE-2026-50263 - CreateSaverWindow Use-After-Free Information Disclosure
+Patch:     0006-saver-re-fetch-screen-private-after-CheckScreenPriva.patch
+# ZDI-CAN-30136 - CVE-2026-50256 - Font Alias Stack-based Buffer Overflow
+Patch:     0007-dix-increase-XLFDMAXFONTNAMELEN-to-match-libXfont2-s.patch
+# Other security related fixes
+Patch:     0001-os-use-close-on-exec-for-X-server-socket-to-prevent-.patch
+Patch:     0002-xf86bigfont-fix-Wimplicit-function-declaration-error.patch
+Patch:     0003-dix-Fix-builds-with-meson-Dxace-false-Dwerror-true.patch
+Patch:     0004-meson-don-t-build-xselinux-if-xace-is-disabled.patch
+Patch:     0005-xwayland-fix-builds-with-xace-disabled.patch
+Patch:     0006-panoramix-avoid-null-dereference-in-PanoramiXMaybeAd.patch
+Patch:     0007-panoramix-avoid-null-dereference-in-PanoramiXConsoli.patch
+Patch:     0008-glamor-handle-potential-NULL-return-from-GetPictureS.patch
+Patch:     0009-glamor-handle-allocation-failure-in-glamor_create_pi.patch
+Patch:     0010-glamor-silence-false-positive-in-glamor_validate_gc.patch
+Patch:     0011-glamor-handle-allocation-failures-in-glamor_largepix.patch
+Patch:     0012-glamor-avoid-null-dereference-in-glamor_dash_setup.patch
+Patch:     0013-glamor-avoid-null-dereference-in-glamor_composite_cl.patch
+Patch:     0014-glamor-avoid-double-free-in-glamor_make_pixmap_expor.patch
+Patch:     0015-dix-set-errorValue-correctly-when-XID-lookup-fails-i.patch
+Patch:     0016-os-avoid-closing-null-fd-at-Fopen.patch
+Patch:     0017-os-make-FormatInt64-handle-LONG_MIN-correctly.patch
+Patch:     0018-xwayland-wrong-expecting_event.patch
+Patch:     0019-render-fix-multiple-mem-leaks-on-err-paths.patch
+Patch:     0020-dix-avoid-null-ptr-deref-at-doListFontsAndAliases.patch
+Patch:     0021-randr-clear-primary-screen-s-primaryOutput-when-the-.patch
+Patch:     0022-os-include-assert.h-in-ospoll.c.patch
+Patch:     0023-xkb-fix-incorrect-size-check-when-growing-doodads-in.patch
+Patch:     0024-xkb-fix-potential-buff-overflow-in-XkbVModIndexText-.patch
+Patch:     0025-Xi-add-missing-gesture-grab-type-checks-in-ProcXIPas.patch
+Patch:     0026-xkb-Fix-out-of-bounds-array-access-in-_CheckSetShape.patch
+Patch:     0027-xkb-Fix-off-by-one-in-color-index-validation-in-_Che.patch
+Patch:     0028-xkb-Fix-off-by-one-and-NULL-dereferences-in-_CheckSe.patch
+Patch:     0029-xkb-Add-bounds-check-for-action-data-in-CheckKeyActi.patch
+Patch:     0030-present-actually-return-the-created-notifies.patch
+Patch:     0031-glx-reject-negative-size-in-FeedbackBuffer-and-Selec.patch
+# https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2237
+Patch:     0001-dix-Silence-a-compiler-warning-in-doListFontsAndAlia.patch
 
 License:   MIT
 
@@ -147,6 +196,16 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Fri Jun 12 2026  Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-4.2
+- Other security related fixes
+  Resolves: https://redhat.atlassian.net/browse/RHEL-184290
+
+* Wed Jun 10 2026  Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-4.1
+- CVE fix for: CVE-2026-50256, CVE-2026-50257, CVE-2026-50258,
+               CVE-2026-50259, CVE-2026-50260, CVE-2026-50261,
+               CVE-2026-50262, CVE-2026-50263
+  Resolves: https://redhat.atlassian.net/browse/RHEL-182443
+
 * Wed Apr 22 2026 Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-4
 - CVE fix for: CVE-2026-33999, CVE-2026-34000, CVE-2026-34001
                CVE-2026-34002, CVE-2026-34003

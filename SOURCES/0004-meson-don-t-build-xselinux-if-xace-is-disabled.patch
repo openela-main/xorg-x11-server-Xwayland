@@ -1,0 +1,43 @@
+From 4ba490c26b027c704470f1159c95b9dadf3c0f0c Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Wed, 20 Aug 2025 10:58:39 -0700
+Subject: [PATCH xserver 04/31] meson: don't build xselinux if xace is disabled
+
+xselinux requires xace to build
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit 7b15321b3b0e40244af1488f4ee1cd4453a78bc8)
+(cherry picked from commit f468122d8df385ddac65022fcdbbf015896c22ad)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ meson.build | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 2e62f66a9..d48733938 100644
+--- a/meson.build
++++ b/meson.build
+@@ -452,7 +452,7 @@ if get_option('xselinux') != 'false'
+     if get_option('xselinux') == 'true'
+         build_xselinux = true
+     else
+-        build_xselinux = dep_selinux.found() and dep_audit.found()
++        build_xselinux = dep_selinux.found() and dep_audit.found() and build_xace
+     endif
+ 
+     if build_xselinux
+@@ -460,6 +460,10 @@ if get_option('xselinux') != 'false'
+         common_dep += dep_audit
+     endif
+ endif
++if build_xselinux and not build_xace
++    error('cannot build SELinux extension without X-ACE')
++endif
++
+ 
+ socket_dep = []
+ if host_machine.system() == 'windows'
+-- 
+2.54.0
+

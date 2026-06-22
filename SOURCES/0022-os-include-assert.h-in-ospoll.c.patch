@@ -1,0 +1,48 @@
+From 5ed70b3153590cd21a9c2fc686dbce425f6fee59 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 14 Mar 2026 17:06:28 -0700
+Subject: [PATCH xserver 22/31] os: include <assert.h> in ospoll.c
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build failure in mingw-cross-build:
+
+../os/ospoll.c: In function ‘ospoll_destroy’:
+../os/ospoll.c:266:9: error: implicit declaration of function ‘assert’
+ [-Werror=implicit-function-declaration]
+  266 |         assert (ospoll->num == 0);
+      |         ^~~~~~
+../os/ospoll.c:59:1: note: ‘assert’ is defined in header ‘<assert.h>’;
+ did you forget to ‘#include <assert.h>’?
+   58 | #include "xserver_poll.h"
+  +++ |+#include <assert.h>
+   59 | #define POLL            1
+../os/ospoll.c:266:9: warning: nested extern declaration of ‘assert’
+ [-Wnested-externs]
+  266 |         assert (ospoll->num == 0);
+      |         ^~~~~~
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+(cherry picked from commit 7f8570bfa16bd41e4536385b46742cc316546529)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2151>
+---
+ os/ospoll.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/os/ospoll.c b/os/ospoll.c
+index c68aabc87..c5e0de931 100644
+--- a/os/ospoll.c
++++ b/os/ospoll.c
+@@ -24,6 +24,7 @@
+ #include <dix-config.h>
+ #endif
+ 
++#include <assert.h>
+ #include <X11/X.h>
+ #include <X11/Xproto.h>
+ #include <stdlib.h>
+-- 
+2.54.0
+
