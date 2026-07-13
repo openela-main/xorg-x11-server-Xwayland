@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   24.1.9
-Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.2
+Release:   4%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.3
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -80,6 +80,11 @@ Patch:     0030-present-actually-return-the-created-notifies.patch
 Patch:     0031-glx-reject-negative-size-in-FeedbackBuffer-and-Selec.patch
 # https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2237
 Patch:     0001-dix-Silence-a-compiler-warning-in-doListFontsAndAlia.patch
+# CVE-2026-56000: GLX contextTags Use-After-Free in CommonMakeCurrent()
+Patch:     0001-glx-free-old-context-tag-before-allocating-new-one-i.patch
+# CVE-2026-55999: glamor Font Atlas Heap Buffer Overflow
+Patch:     0002-fb-mi-glamor-reject-glyphs-with-negative-dimensions.patch
+Patch:     0003-glamor-reject-fonts-with-per-glyph-metrics-exceeding.patch
 
 License:   MIT
 
@@ -198,6 +203,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/*.desktop
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Wed Jul 08 2026 Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-4.3
+- CVE fix for: CVE-2026-55999, CVE-2026-56000
+  Resolves: https://redhat.atlassian.net/browse/RHEL-191532
+  Resolves: https://redhat.atlassian.net/browse/RHEL-191524
+
 * Fri Jun 12 2026  Olivier Fourdan <ofourdan@redhat.com> - 24.1.9-4.2
 - Other security related fixes
   Resolves: https://redhat.atlassian.net/browse/RHEL-184292

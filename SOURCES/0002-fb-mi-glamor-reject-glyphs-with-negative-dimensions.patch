@@ -1,0 +1,80 @@
+From 822fac4443178ba7031b90dc35b91ea3af4dc7f6 Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Mon, 1 Jun 2026 20:44:34 +1000
+Subject: [PATCH xserver 2/3] fb/mi/glamor: reject glyphs with negative
+ dimensions
+
+GLYPHWIDTHPIXELS and GLYPHHEIGHTPIXELS compute glyph dimensions from
+signed INT16 fields. A crafted PCF font can produce negative results
+(e.g. rightSideBearing < leftSideBearing).
+
+All callees have a while (height--) loop which will end up in OOB writes
+for negative height values.
+
+In the case of a negative height, some callees cast to size_t or end up
+with negative strides.
+
+The same pattern exists in fbPoloyGlyphBit, miPolyGlyphBlt and
+glamor_poly_glyph_blt_gl, so let's fix all of them in one go.
+
+Assisted-by: Claude:claude-opus-4-6
+(cherry picked from commit e31efd3e106e53bfc29d499ff0a34b0d20013f2d)
+
+Part-of: <https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2251>
+---
+ fb/fbglyph.c             | 4 ++--
+ glamor/glamor_glyphblt.c | 2 +-
+ mi/miglblt.c             | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fb/fbglyph.c b/fb/fbglyph.c
+index 1bdc2d4fd..5c9318f5e 100644
+--- a/fb/fbglyph.c
++++ b/fb/fbglyph.c
+@@ -95,7 +95,7 @@ fbPolyGlyphBlt(DrawablePtr pDrawable,
+         pglyph = FONTGLYPHBITS(pglyphBase, pci);
+         gWidth = GLYPHWIDTHPIXELS(pci);
+         gHeight = GLYPHHEIGHTPIXELS(pci);
+-        if (gWidth && gHeight) {
++        if (gWidth > 0 && gHeight > 0) {
+             gx = x + pci->metrics.leftSideBearing;
+             gy = y - pci->metrics.ascent;
+             if (glyph && gWidth <= sizeof(FbStip) * 8 &&
+@@ -197,7 +197,7 @@ fbImageGlyphBlt(DrawablePtr pDrawable,
+         pglyph = FONTGLYPHBITS(pglyphBase, pci);
+         gWidth = GLYPHWIDTHPIXELS(pci);
+         gHeight = GLYPHHEIGHTPIXELS(pci);
+-        if (gWidth && gHeight) {
++        if (gWidth > 0 && gHeight > 0) {
+             gx = x + pci->metrics.leftSideBearing;
+             gy = y - pci->metrics.ascent;
+             if (glyph && gWidth <= sizeof(FbStip) * 8 &&
+diff --git a/glamor/glamor_glyphblt.c b/glamor/glamor_glyphblt.c
+index 4ab23b333..09d232609 100644
+--- a/glamor/glamor_glyphblt.c
++++ b/glamor/glamor_glyphblt.c
+@@ -90,7 +90,7 @@ glamor_poly_glyph_blt_gl(DrawablePtr drawable, GCPtr gc,
+             int h = GLYPHHEIGHTPIXELS(charinfo);
+             uint8_t *glyphbits = FONTGLYPHBITS(NULL, charinfo);
+ 
+-            if (w && h) {
++            if (w > 0 && h > 0) {
+                 int glyph_x = x + charinfo->metrics.leftSideBearing;
+                 int glyph_y = y - charinfo->metrics.ascent;
+                 int glyph_stride = GLYPHWIDTHBYTESPADDED(charinfo);
+diff --git a/mi/miglblt.c b/mi/miglblt.c
+index 169d44ffc..8e33e90d8 100644
+--- a/mi/miglblt.c
++++ b/mi/miglblt.c
+@@ -143,7 +143,7 @@ miPolyGlyphBlt(DrawablePtr pDrawable, GC * pGC, int x, int y, unsigned int nglyp
+         pglyph = FONTGLYPHBITS(pglyphBase, pci);
+         gWidth = GLYPHWIDTHPIXELS(pci);
+         gHeight = GLYPHHEIGHTPIXELS(pci);
+-        if (gWidth && gHeight) {
++        if (gWidth > 0 && gHeight > 0) {
+             nbyGlyphWidth = GLYPHWIDTHBYTESPADDED(pci);
+             nbyPadGlyph = BitmapBytePad(gWidth);
+ 
+-- 
+2.55.0
+
