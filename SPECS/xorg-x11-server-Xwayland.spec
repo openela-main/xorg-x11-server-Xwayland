@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   20%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.3
+Release:   20%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.4
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -199,6 +199,35 @@ Patch10120: 0001-xkb-fix-int-size-mismatch.patch
 # CVE-2026-55999: glamor Font Atlas Heap Buffer Overflow
 Patch10122: 0002-fb-mi-glamor-reject-glyphs-with-negative-dimensions.patch
 Patch10123: 0003-glamor-reject-fonts-with-per-glyph-metrics-exceeding.patch
+# CVE-2026-88812: XKB SetGeometry TextDoodad Double Free
+Patch10124: 0001-xkb-NULL-text-pointer-after-free-in-_CheckSetDoodad-.patch
+# CVE-2026-93520: XKB ChangeKeycodeRange Heap Out-of-Bounds Write
+Patch10125: 0002-xkb-allocate-names-keys-to-MAP_LENGTH-in-XkbAllocNam.patch
+# CVE-2026-93518: XKB ResizeKeyType Numeric Truncation
+Patch10126: 0003-xkb-widen-size_syms-num_syms-size_acts-num_acts-to-u.patch
+# CVE-2026-93524: XKB SetMap Key Width/Action Count Desync Out-Of-Bounds Read
+Patch10127: 0004-xkb-fix-CheckKeySyms-overwriting-request-range-symsP.patch
+# CVE-2026-93521: RandR ChangeProviderProperty Heap Buffer Overflow
+Patch10128: 0005-randr-fix-size-and-offset-in-RRChangeProviderPropert.patch
+# CVE-2026-93523: XInput2 PassiveUngrabDevice Modifier Out-of-Bounds Write
+Patch10129: 0006-Xi-validate-modifier-values-in-ProcXIPassiveUngrabDe.patch
+# CVE-2026-93517: GLX RenderLarge Heap Buffer Overflow
+Patch10130: 0007-glx-validate-dataBytes-against-cmdlen-in-RenderLarge.patch
+# CVE-2026-93515: Present Extension Cross-Window Notify Use-After-Free
+Patch10131: 0008-present-unlink-notifies-from-window-list-in-present_.patch
+# CVE-2026-93516: XInput Passive Grab modifierDevice Use-After-Free
+Patch10132: 0009-dix-remove-passive-grabs-referencing-a-device-on-rem.patch
+# CVE-2026-93519: XFixes Pointer Barrier Event List Buffer Overflow
+Patch10133: 0010-Xi-add-bounds-check-for-barrier-events-in-input_cons.patch
+# CVE-2026-93536: GestureBuildSprite Use-After-Free
+# Not applicable
+# CVE-2026-93522: Glamor CopyArea CPU-FBO Heap Buffer Overflow
+# Not applicable
+# Fix-ups for CVE-2026-93519
+# https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2352
+# https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2353
+Patch10135: 0001-Xi-avoid-memory-leak-when-hitting-bounds-check-for-b.patch
+Patch10136: 0002-Xi-fix-event_id-time-delta-in-generated-barrier-even.patch
 
 License:   MIT
 
@@ -306,6 +335,20 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Tue Oct 13 2026 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20.4
+- CVE fix for: CVE-2026-88812, CVE-2026-93515, CVE-2026-93516
+               CVE-2026-93517, CVE-2026-93518, CVE-2026-93519,
+               CVE-2026-93520, CVE-2026-93521, CVE-2026-93523,
+               CVE-2026-93524
+  Resolves: https://redhat.atlassian.net/browse/RHEL-277856
+  Resolves: https://redhat.atlassian.net/browse/RHEL-277838
+  Resolves: https://redhat.atlassian.net/browse/RHEL-275768
+  Resolves: https://redhat.atlassian.net/browse/RHEL-276864
+  Resolves: https://redhat.atlassian.net/browse/RHEL-276342
+  Resolves: https://redhat.atlassian.net/browse/RHEL-276410
+  Resolves: https://redhat.atlassian.net/browse/RHEL-277876
+  Resolves: https://redhat.atlassian.net/browse/RHEL-277870
+
 * Wed Jul 08 2026 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20.3
 - CVE fix for: CVE-2026-55999
   Resolves: https://redhat.atlassian.net/browse/RHEL-191516
