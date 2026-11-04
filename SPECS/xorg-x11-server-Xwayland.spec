@@ -9,7 +9,7 @@
 Summary:   Xwayland
 Name:      xorg-x11-server-Xwayland
 Version:   21.1.3
-Release:   20%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.4
+Release:   20%{?gitdate:.%{gitdate}git%{shortcommit}}%{?dist}.5
 
 URL:       http://www.x.org
 %if 0%{?gitdate}
@@ -228,6 +228,9 @@ Patch10133: 0010-Xi-add-bounds-check-for-barrier-events-in-input_cons.patch
 # https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/2353
 Patch10135: 0001-Xi-avoid-memory-leak-when-hitting-bounds-check-for-b.patch
 Patch10136: 0002-Xi-fix-event_id-time-delta-in-generated-barrier-even.patch
+# Missing antecedent for CVE-2026-93520
+# https://gitlab.freedesktop.org/xorg/xserver/-/commit/92bcebfd7
+Patch10137: 0001-xkb-Always-use-MAP_LENGTH-keymap-size.patch
 
 License:   MIT
 
@@ -335,6 +338,10 @@ rm -Rf $RPM_BUILD_ROOT%{_localstatedir}/lib/xkb
 %{_libdir}/pkgconfig/xwayland.pc
 
 %changelog
+* Tue Nov  3 2026 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20.5
+- Add missing antecedent for CVE-2026-93520 fix
+  Resolves: https://redhat.atlassian.net/browse/RHEL-299853
+
 * Tue Oct 13 2026 Olivier Fourdan <ofourdan@redhat.com> - 21.1.3-20.4
 - CVE fix for: CVE-2026-88812, CVE-2026-93515, CVE-2026-93516
                CVE-2026-93517, CVE-2026-93518, CVE-2026-93519,
